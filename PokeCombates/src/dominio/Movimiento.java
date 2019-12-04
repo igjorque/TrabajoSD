@@ -43,4 +43,8 @@ public class Movimiento {
 	public int getPrioridad() {
 		return this.prioridad;
 	}
+	
+	public void gastarPP() {
+		this.PP--;
+	}
 }
