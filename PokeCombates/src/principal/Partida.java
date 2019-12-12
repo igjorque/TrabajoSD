@@ -1,11 +1,18 @@
-package dominio;
+package principal;
+
+import dominio.Jugador;
+import dominio.Movimiento;
+import dominio.Pokemon;
+import dominio.TablaTipos;
+import negocio.NegocioPokemon;
 
 public class Partida {
 	
 	private Jugador yo;
 	private Jugador rival;
-	
 	private TablaTipos tabla;
+	
+	private NegocioPokemon neg;
 	
 	public Partida (Jugador j1, Jugador j2, TablaTipos tabla) {
 		this.yo = j1;
@@ -39,7 +46,8 @@ public class Partida {
 			ataque = 0.01f * bonificacion * efectividad * variacion * (((0.2f * 10 + 1) * 
 					pokemonPropio.getAtaque() * m.getPotencia() / 25 * pokemonRival.getDefensa()) + 2);
 			
-			pokemonRival.recibirAtaque(ataque);
+			neg.getServiciosPokemon().recibirAtaque(pokemonRival, ataque);
+			
 			return true;
 		}
 		else {

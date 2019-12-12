@@ -3,5 +3,6 @@ package dominio;
 public enum Tipo {
 	Fuego,
 	Agua,
-	Planta;
+	Planta,
+	Normal;
 }

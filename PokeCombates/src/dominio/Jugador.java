@@ -9,7 +9,6 @@ public class Jugador {
 	public Jugador(String nombre, Equipo equipo) {
 		this.nombre = nombre;
 		this.equipoPokemon = equipo;
-		this.seleccionado = this.equipoPokemon.primero();
 	}
 	
 	public String getNombre() {

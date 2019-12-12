@@ -16,9 +16,9 @@ public class Pokemon {
 	
 	private List<Movimiento> movimientos;
 	
-	public Pokemon(String nombre, Tipo tipo, int ps, int ataque, int defensa, int velocidad, List<Movimiento> movimientos) {
+	public Pokemon(String nombre, Tipo lins, int ps, int ataque, int defensa, int velocidad, List<Movimiento> movimientos) {
 		this.nombre = nombre;
-		this.tipo = tipo;
+		this.tipo = lins;
 		this.ps = ps;
 		this.ataque = ataque;
 		this.defensa = defensa;
@@ -38,6 +38,10 @@ public class Pokemon {
 	public int getPs() {
 		return ps;
 	}
+	
+	public void setPs(int ps) {
+		this.ps = ps;
+	}
 
 	public int getAtaque() {
 		return ataque;
@@ -54,6 +58,10 @@ public class Pokemon {
 	public boolean getDebilitado() {
 		return this.debilitado;
 	}
+	
+	public void setDebilitado(boolean deb) {
+		this.debilitado = true;
+	}
 
 	public List<Movimiento> getMovimientos() {
 		return movimientos;
@@ -61,12 +69,5 @@ public class Pokemon {
 
 	public void setMovimientos(List<Movimiento> movimientos) {
 		this.movimientos = movimientos;
-	}
-	
-	public void recibirAtaque(float danno) {
-		this.ps = (int) (this.ps - danno);
-		if (this.ps <= 0) {
-			this.debilitado = true;
-		}
 	}
 }
