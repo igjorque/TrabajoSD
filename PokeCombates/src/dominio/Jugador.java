@@ -9,6 +9,7 @@ public class Jugador {
 	public Jugador(String nombre, Equipo equipo) {
 		this.nombre = nombre;
 		this.equipoPokemon = equipo;
+		this.seleccionado = equipo.getListaPokemon().get(0);
 	}
 	
 	public String getNombre() {
@@ -27,7 +28,5 @@ public class Jugador {
 		return this.seleccionado;
 	}
 	
-	public Movimiento elegirAtaque(int i) {
-		return this.seleccionado.getMovimientos().get(i);
-	}
+	
 }

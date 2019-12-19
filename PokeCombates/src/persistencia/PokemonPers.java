@@ -11,9 +11,9 @@ import java.util.List;
 import dominio.*;
 
 public class PokemonPers {
-	private String pokemon = "\\FicheroPokemon.txt";
+	private static String pokemon = "\\FicheroPokemon.txt";
 	
-	public List<Pokemon> getPokemonList() {
+	public static List<Pokemon> getPokemonList() {
 		
 		List<Pokemon> listaPoke = new ArrayList<Pokemon>();
 		
@@ -22,13 +22,17 @@ public class PokemonPers {
 			String linea;
 			String [] lins; // LineaSplit
 			Pokemon poke = null;
-			Movimiento mov = null;
 			List<Movimiento> listaMov = null;
 			
 			while((linea = br.readLine()) != null) {
 				lins = linea.split(";");
+				
 				listaMov = new ArrayList<Movimiento>();
-				//---------------
+				listaMov.add(MovimientoPers.encontrarMovimiento(lins[6]));
+				listaMov.add(MovimientoPers.encontrarMovimiento(lins[7]));
+				listaMov.add(MovimientoPers.encontrarMovimiento(lins[8]));
+				listaMov.add(MovimientoPers.encontrarMovimiento(lins[9]));
+				
 				poke = new Pokemon(lins[0], MetodosAuxiliares.stringToTipo(lins[1]), Integer.parseInt(lins[2]), Integer.parseInt(lins[3]), 
 						Integer.parseInt(lins[4]), Integer.parseInt(lins[5]), listaMov);
 				

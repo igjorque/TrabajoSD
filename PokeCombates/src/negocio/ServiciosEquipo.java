@@ -1,21 +1,13 @@
 package negocio;
 
 import dominio.Equipo;
+import dominio.Jugador;
+import dominio.Movimiento;
 import dominio.Pokemon;
 
 public class ServiciosEquipo {
 	
-	
-	public Pokemon primero(Equipo e) {
-		if (!e.getListaPokemon().isEmpty()){
-			return e.getListaPokemon().get(0);
-		}
-		else {
-			return null;
-		}
-	}
-	
-	public boolean equipoDebilitado(Equipo e) {
+	public boolean equipoDebilitado (Equipo e) {
 		boolean b = true;
 		int i = 0;
 		
@@ -26,5 +18,13 @@ public class ServiciosEquipo {
 		}
 		
 		return b;
+	}
+	
+	public void cambiarPokemon (Jugador j, Pokemon p) {
+		j.setSeleccionado(p);
+	}
+	
+	public Movimiento elegirAtaque(Jugador j, int i) {
+		return j.getSeleccionado().getMovimientos().get(i);
 	}
 }

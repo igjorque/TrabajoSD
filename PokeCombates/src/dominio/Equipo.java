@@ -14,4 +14,10 @@ public class Equipo {
 	public List<Pokemon> getListaPokemon() {
 		return listaPokemon;
 	}
+	
+	public void addPokemon(Pokemon p) {
+		if (!(this.listaPokemon.size() >= 6)) {
+			listaPokemon.add(p);
+		}
+	}
 }

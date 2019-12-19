@@ -12,9 +12,9 @@ import dominio.*;
 
 public class MovimientoPers {
 
-private String movimientos = "\\FicheroMovimientos.txt";
+	private static String movimientos = "\\FicheroMovimientos.txt";
 	
-	public List<Movimiento> getMovimientoList() {
+	public static List<Movimiento> getMovimientoList() {
 		
 		List<Movimiento> listaMov = new ArrayList<Movimiento>();
 		
@@ -44,6 +44,29 @@ private String movimientos = "\\FicheroMovimientos.txt";
 	}
 	
 	public static Movimiento encontrarMovimiento(String s) {
-		return null;
+		
+		Movimiento mov = null;
+		
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(movimientos)));){
+			
+			String linea;
+			String [] lins; // LineaSplit
+			
+			while((linea = br.readLine()) != null) {
+				lins = linea.split(";");
+				
+				if (lins[0].equals(s)) {
+					mov = new Movimiento(lins[0], MetodosAuxiliares.stringToTipo(lins[1]), Integer.parseInt(lins[2]), Integer.parseInt(lins[3]), 
+							Integer.parseInt(lins[4]), Integer.parseInt(lins[5]));
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+			
+		return mov;
 	}
 }
