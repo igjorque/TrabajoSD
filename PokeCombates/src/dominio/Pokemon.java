@@ -70,4 +70,12 @@ public class Pokemon {
 	public void setMovimientos(List<Movimiento> movimientos) {
 		this.movimientos = movimientos;
 	}
+	
+	@Override
+	public String toString() {
+		return "Nombre: " + this.nombre + " Tipo: " + this.tipo + 
+				"\r\n     PS: " + this.ps + " Ataque: " + this.ataque + 
+				"\r\n     Defensa: " + this.defensa + " Velocidad: " + this.velocidad + 
+				"\r\n";
+	}
 }

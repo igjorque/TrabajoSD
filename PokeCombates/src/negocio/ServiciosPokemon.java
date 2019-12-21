@@ -6,8 +6,10 @@ import dominio.TablaTipos;
 
 public class ServiciosPokemon {
 	
+	// "Acción" de atacar. Ambos pokémon están combatiendo. Solo puede obtener un movimiento que no se haya gastado (que tenga PPs).
+	// Devuelve un booleano que indica si el ataque ha tenido exito (TRUE) o no (FALSE).
 	public boolean atacar(Pokemon pokemonPropio, Pokemon pokemonRival, TablaTipos tabla, Movimiento m) {
-		m.gastarPP();
+		m.setPP(m.getPP()-1);
 		
 		int probabilidadAtaque = (int) (Math.random() * 100);
 		

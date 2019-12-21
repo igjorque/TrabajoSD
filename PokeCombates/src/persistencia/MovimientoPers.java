@@ -27,8 +27,8 @@ public class MovimientoPers {
 			while((linea = br.readLine()) != null) {
 				lins = linea.split(";");
 				
-				mov = new Movimiento(lins[0], MetodosAuxiliares.stringToTipo(lins[1]), Integer.parseInt(lins[2]), Integer.parseInt(lins[3]), 
-						Integer.parseInt(lins[4]), Integer.parseInt(lins[5]));
+				mov = new Movimiento(lins[0], MetodosAuxiliares.stringToTipo(lins[1]), lins[2], Integer.parseInt(lins[3]), Integer.parseInt(lins[4]), 
+						Integer.parseInt(lins[5]), Integer.parseInt(lins[6]));
 				
 				listaMov.add(mov);
 			}
@@ -56,8 +56,8 @@ public class MovimientoPers {
 				lins = linea.split(";");
 				
 				if (lins[0].equals(s)) {
-					mov = new Movimiento(lins[0], MetodosAuxiliares.stringToTipo(lins[1]), Integer.parseInt(lins[2]), Integer.parseInt(lins[3]), 
-							Integer.parseInt(lins[4]), Integer.parseInt(lins[5]));
+					mov = new Movimiento(lins[0], MetodosAuxiliares.stringToTipo(lins[1]), lins[2], Integer.parseInt(lins[3]), Integer.parseInt(lins[4]), 
+							Integer.parseInt(lins[5]), Integer.parseInt(lins[6]));
 				}
 			}
 			
