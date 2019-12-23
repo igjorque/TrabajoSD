@@ -9,7 +9,7 @@ import persistencia.PokemonPers;
 
 public class presConsola {
 
-	public static void menuCreacionJugador () {
+	public static Jugador menuCreacionJugador () {
 		
 		Jugador jugador;
 		String nombreJugador;
@@ -101,10 +101,105 @@ public class presConsola {
 			}
 		}
 		
+		System.out.println("Profesor Oak: ¿Estás listo? Excelente, ¡vamos allá!");
+		
 		jugador = new Jugador(nombreJugador, equipoJugador);
 		
-		System.out.println("");
 		sc.close();
+		
+		return jugador;
+	}
+	
+	public static void mostrarEspera() {
+		System.out.println("Esperando...");
+	}
+	
+	public static int menuAcciones() {
+		
+		Scanner s = new Scanner (System.in);
+		int opcion;
+		
+		do {
+			System.out.println("Acciones disponibles:");
+			System.out.println("	1. Elegir movimiento.");
+			System.out.println("	2. Cambiar de pokémon.");
+			System.out.println("	3. Rendirse.");
+			
+			opcion = s.nextInt();
+		} while ((opcion < 1) || (opcion > 3));
+		
+		return opcion;
+	}
+	
+	public static int menuMovimientos(Pokemon p) {
+		
+		Scanner s = new Scanner (System.in);
+		int opcion;
+		
+		do {
+			System.out.println("Movimientos de " + p.getNombre() + ":");
+			System.out.println("	0. " + p.getMovimientos().get(0));
+			System.out.println("	1. " + p.getMovimientos().get(1));
+			System.out.println("	2. " + p.getMovimientos().get(2));
+			System.out.println("	3. " + p.getMovimientos().get(3));
+			
+			opcion = s.nextInt();
+		} while ((opcion < 0) || (opcion > 4));
+		
+		return opcion;
+	}
+	
+	public static Pokemon menuCambiarPokemon (Pokemon actual, Equipo e) {
+		
+		Scanner s = new Scanner (System.in);
+		int opcion;
+		
+		int numActual;
+		if (actual.getNombre().equals(e.getListaPokemon().get(0))) {
+			numActual = 0;
+		}
+		else if (actual.getNombre().equals(e.getListaPokemon().get(1))) {
+			numActual = 1;
+		}
+		else if (actual.getNombre().equals(e.getListaPokemon().get(2))) {
+			numActual = 2;
+		}
+		else if (actual.getNombre().equals(e.getListaPokemon().get(3))) {
+			numActual = 3;
+		}
+		else if (actual.getNombre().equals(e.getListaPokemon().get(4))) {
+			numActual = 4;
+		}
+		else {
+			numActual = 5;
+		}
+	
+		do {
+			System.out.println("Equipo:");
+			System.out.println("	0. " + e.getListaPokemon().get(0).getNombre());
+			System.out.println("	1. " + e.getListaPokemon().get(1).getNombre());
+			System.out.println("	2. " + e.getListaPokemon().get(2).getNombre());
+			System.out.println("	3. " + e.getListaPokemon().get(3).getNombre());
+			System.out.println("	4. " + e.getListaPokemon().get(4).getNombre());
+			System.out.println("	5. " + e.getListaPokemon().get(5).getNombre());
+			
+			opcion = s.nextInt();
+			
+			if (opcion == numActual) {
+				System.out.println("¡Ya es el pokémon seleccionado!");
+			}
+			
+		} while ((opcion < 0) || (opcion > 5) || (opcion == numActual));
+		
+		return e.getListaPokemon().get(opcion);
+	}
+	
+	public static void perder() {
+		System.out.println("¡Has perdido! Más suerte la próxima vez.");
+	}
+	
+	public static void ganar() {
+		System.out.println("¡Felicidades, eres el mejor entrenador pokémon!");
 	}
 	
 	private static void mostrarListadoPoke(List<Pokemon> listado) {
