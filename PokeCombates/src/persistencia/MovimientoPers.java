@@ -14,9 +14,9 @@ public class MovimientoPers {
 
 	private static String movimientos = "\\FicheroMovimientos.txt";
 	
-	public static List<Movimiento> getMovimientoList() {
+	public static ArrayList<Movimiento> getMovimientoList() {
 		
-		List<Movimiento> listaMov = new ArrayList<Movimiento>();
+		ArrayList<Movimiento> listaMov = new ArrayList<Movimiento>();
 		
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(movimientos)));){
 			

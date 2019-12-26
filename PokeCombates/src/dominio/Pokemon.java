@@ -1,8 +1,9 @@
 package dominio;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Pokemon {
+public class Pokemon implements Serializable {
 
 	private String nombre;
 	private Tipo tipo;

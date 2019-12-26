@@ -1,5 +1,6 @@
 package presentacion;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -9,7 +10,7 @@ import persistencia.PokemonPers;
 
 public class presConsola {
 
-	public static Jugador menuCreacionJugador () {
+	public static Jugador menuCreacionJugador (ArrayList<Pokemon> lPoke, ArrayList<Movimiento> lMov) {
 		
 		Jugador jugador;
 		String nombreJugador;
@@ -17,8 +18,8 @@ public class presConsola {
 		int indice1, indice2;
 		Equipo equipoJugador = new Equipo();
 		boolean continuar = false;
-		List<Pokemon> listaPokemon = PokemonPers.getPokemonList();
-		List<Movimiento> listaMovimiento = MovimientoPers.getMovimientoList();
+		List<Pokemon> listaPokemon = lPoke;
+		List<Movimiento> listaMovimiento = lMov;
 		
 		
 		Scanner sc = new Scanner(System.in);
@@ -192,6 +193,14 @@ public class presConsola {
 		} while ((opcion < 0) || (opcion > 5) || (opcion == numActual));
 		
 		return e.getListaPokemon().get(opcion);
+	}
+	
+	public static void mostrarDannos(Jugador j, float d) {
+		System.out.println("El pokémon " + j.getSeleccionado().getNombre() + " de " + j.getNombre() + " ha recibido " + d + " de daño.");
+	}
+	
+	public static void mostrarDebilitado(Jugador j) {
+		System.out.println("¡El pokémon " + j.getSeleccionado().getNombre() + " de " + j.getNombre() + " se ha debilitado!");
 	}
 	
 	public static void perder() {

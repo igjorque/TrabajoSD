@@ -13,9 +13,9 @@ import dominio.*;
 public class PokemonPers {
 	private static String pokemon = "\\FicheroPokemon.txt";
 	
-	public static List<Pokemon> getPokemonList() {
+	public static ArrayList<Pokemon> getPokemonList() {
 		
-		List<Pokemon> listaPoke = new ArrayList<Pokemon>();
+		ArrayList<Pokemon> listaPoke = new ArrayList<Pokemon>();
 		
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(pokemon)));){
 			

@@ -1,6 +1,8 @@
 package dominio;
 
-public class Movimiento {
+import java.io.Serializable;
+
+public class Movimiento implements Serializable {
 	
 	private String nombre;
 	private Tipo tipo;
