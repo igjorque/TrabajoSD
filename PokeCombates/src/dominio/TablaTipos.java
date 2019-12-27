@@ -32,4 +32,8 @@ public class TablaTipos {
 	public float buscarEficacia(Tipo tipo1, Tipo tipo2) {
 		return this.tabla.get(tipo1).get(tipo2);
 	}
+	
+	public void rellenarTabla() {
+		
+	}
 }

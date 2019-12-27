@@ -20,6 +20,12 @@ public class ServiciosEquipo {
 		return b;
 	}
 	
+	public void rendirse (Equipo e) {
+		for (int i = 0; i < e.getListaPokemon().size(); i++) {
+			e.getListaPokemon().get(i).setDebilitado(true);
+		}
+	}
+	
 	public void cambiarPokemon (Jugador j, Pokemon p) {
 		j.setSeleccionado(p);
 	}

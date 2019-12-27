@@ -1,7 +1,6 @@
 package net;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -55,26 +54,28 @@ public class PokeClient {
 			
 			if (brComb.readLine().equals("Empieza")) {
 				int opcion;
-				int mov;
-				Pokemon pok;
+				int imov;
+				
+				Pokemon pok = null;
+				Movimiento mov = null;
+				boolean ren = false;
 				
 				while (this.finalizar == false) {
 					opcion = presConsola.menuAcciones();
 					switch (opcion) {
 						case 1: 
-							mov = presConsola.menuMovimientos(jugador.getSeleccionado());
-							oosC.writeObject(this.np.getServiciosEquipo().elegirAtaque(jugador, mov));
-							oosC.writeObject(jugador.getSeleccionado());
+							imov = presConsola.menuMovimientos(jugador.getSeleccionado());
+							mov = jugador.getSeleccionado().getMovimientos().get(imov);
 							break;
 						case 2:
 							pok = presConsola.menuCambiarPokemon(jugador.getSeleccionado(), jugador.getEquipoPokemon());
-							this.np.getServiciosEquipo().cambiarPokemon(jugador, pok);
-							oosC.writeObject(pok);
 							break;
 						case 3:
-							w.write("Rendirse");
+							ren = true;
 							break;
 					}
+					
+					protocoloCliente(w, mov, pok, ren);
 					
 					while(!brComb.readLine().equals("MensajeFinalizado")) {
 						
@@ -98,6 +99,40 @@ public class PokeClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void protocoloCliente(Writer w, Movimiento m, Pokemon p, boolean r) {
+		try {
+			w.write("MensajeInicio\r\n");
+
+			w.write("Movimiento\r\n");
+			if (m != null) {
+				w.write(m.getNombre() + "\r\\n");
+			} else {
+				w.write("nulo\r\n");
+			}
+
+			w.write("Cambiar\r\n");
+			if (p != null) {
+				w.write(p.getNombre() + "\r\n");
+			} else {
+				w.write("nulo\r\n");
+			}
+
+			w.write("Rendirse\r\n");
+			if (r == true) {
+				w.write("si\r\n");
+			} else {
+				w.write("no\r\n");
+			}
+
+			w.write("MensajeFin\r\n");
+		} 
+		
+		catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 	}

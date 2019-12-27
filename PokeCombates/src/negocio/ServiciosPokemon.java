@@ -8,7 +8,7 @@ public class ServiciosPokemon {
 	
 	// "Acción" de atacar. Ambos pokémon están combatiendo. Solo puede obtener un movimiento que no se haya gastado (que tenga PPs).
 	// Devuelve un booleano que indica si el ataque ha tenido exito (TRUE) o no (FALSE).
-	public boolean atacar(Pokemon pokemonPropio, Pokemon pokemonRival, TablaTipos tabla, Movimiento m) {
+	public float atacar(Pokemon pokemonPropio, Pokemon pokemonRival, TablaTipos tabla, Movimiento m) {
 		m.setPP(m.getPP()-1);
 		
 		int probabilidadAtaque = (int) (Math.random() * 100);
@@ -33,10 +33,11 @@ public class ServiciosPokemon {
 			
 			recibirAtaque(pokemonRival, ataque);
 			
-			return true;
+			return ataque;
 		}
+		
 		else {
-			return false;
+			return 0;
 		}
 	}
 	

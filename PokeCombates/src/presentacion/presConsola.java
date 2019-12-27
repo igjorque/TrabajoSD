@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import dominio.*;
-import persistencia.MovimientoPers;
-import persistencia.PokemonPers;
 
 public class presConsola {
 
@@ -156,19 +154,19 @@ public class presConsola {
 		int opcion;
 		
 		int numActual;
-		if (actual.getNombre().equals(e.getListaPokemon().get(0))) {
+		if (actual.getNombre().equals(e.getListaPokemon().get(0).getNombre())) {
 			numActual = 0;
 		}
-		else if (actual.getNombre().equals(e.getListaPokemon().get(1))) {
+		else if (actual.getNombre().equals(e.getListaPokemon().get(1).getNombre())) {
 			numActual = 1;
 		}
-		else if (actual.getNombre().equals(e.getListaPokemon().get(2))) {
+		else if (actual.getNombre().equals(e.getListaPokemon().get(2).getNombre())) {
 			numActual = 2;
 		}
-		else if (actual.getNombre().equals(e.getListaPokemon().get(3))) {
+		else if (actual.getNombre().equals(e.getListaPokemon().get(3).getNombre())) {
 			numActual = 3;
 		}
-		else if (actual.getNombre().equals(e.getListaPokemon().get(4))) {
+		else if (actual.getNombre().equals(e.getListaPokemon().get(4).getNombre())) {
 			numActual = 4;
 		}
 		else {
