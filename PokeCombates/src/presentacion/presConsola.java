@@ -8,6 +8,8 @@ import dominio.*;
 
 public class presConsola {
 
+	private static Scanner sc = new Scanner(System.in);
+	
 	public static Jugador menuCreacionJugador (ArrayList<Pokemon> lPoke, ArrayList<Movimiento> lMov) {
 		
 		Jugador jugador;
@@ -19,8 +21,6 @@ public class presConsola {
 		List<Pokemon> listaPokemon = lPoke;
 		List<Movimiento> listaMovimiento = lMov;
 		
-		
-		Scanner sc = new Scanner(System.in);
 		
 		System.out.println("	                          .::.\r\n" + 
 				"                               .;:**'            \r\n" + 
@@ -55,13 +55,16 @@ public class presConsola {
 			System.out.println("3. Quiero saber más sobre un movimiento.");
 			System.out.println("4. ¡Elijamos a mis Pokémon!");
 			indice1 = sc.nextInt();
+			sc.nextLine(); //Flush
 			switch (indice1) {
 				case 1:
 					mostrarListadoPoke(listaPokemon);
+					System.out.println();
 					break;
 				case 2:
 					System.out.println("Profesor Oak: Por favor, dime qué Pokémon quieres que te explique. (introduce su índice)");
 					indice2 = sc.nextInt();
+					sc.nextLine(); //Flush
 					System.out.println(listaPokemon.get(indice2).toString());
 					break;
 				case 3:
@@ -78,6 +81,7 @@ public class presConsola {
 					}
 					System.out.println("Profesor Oak: ¿Qué movimiento quieres consultar? (introduce su índice)");
 					indice2 = sc.nextInt();
+					sc.nextLine(); //Flush
 					System.out.println(listaMovimiento.get(indice2).toString());
 					break;
 				case 4:
@@ -92,7 +96,7 @@ public class presConsola {
 							mostrarListadoPoke(listaPokemon);
 							break;
 					}
-					elegirEquipo(sc, equipoJugador, listaPokemon);
+					elegirEquipo(equipoJugador, listaPokemon);
 					continuar = true;
 					break;
 				default:
@@ -104,8 +108,6 @@ public class presConsola {
 		
 		jugador = new Jugador(nombreJugador, equipoJugador);
 		
-		sc.close();
-		
 		return jugador;
 	}
 	
@@ -115,7 +117,6 @@ public class presConsola {
 	
 	public static int menuAcciones() {
 		
-		Scanner s = new Scanner (System.in);
 		int opcion;
 		
 		do {
@@ -124,17 +125,15 @@ public class presConsola {
 			System.out.println("	2. Cambiar de pokémon.");
 			System.out.println("	3. Rendirse.");
 			
-			opcion = s.nextInt();
+			opcion = sc.nextInt();
+			sc.nextLine(); //flush
 		} while ((opcion < 1) || (opcion > 3));
-		
-		s.close();
 		
 		return opcion;
 	}
 	
 	public static int menuMovimientos(Pokemon p) {
 		
-		Scanner s = new Scanner (System.in);
 		int opcion;
 		
 		do {
@@ -144,17 +143,15 @@ public class presConsola {
 			System.out.println("	2. " + p.getMovimientos().get(2));
 			System.out.println("	3. " + p.getMovimientos().get(3));
 			
-			opcion = s.nextInt();
+			opcion = sc.nextInt();
+			sc.nextLine(); //flush
 		} while ((opcion < 0) || (opcion > 4));
-		
-		s.close();
 		
 		return opcion;
 	}
 	
 	public static Pokemon menuCambiarPokemon (Pokemon actual, Equipo e) {
 		
-		Scanner s = new Scanner (System.in);
 		int opcion;
 		
 		int numActual;
@@ -186,15 +183,14 @@ public class presConsola {
 			System.out.println("	4. " + e.getListaPokemon().get(4).getNombre());
 			System.out.println("	5. " + e.getListaPokemon().get(5).getNombre());
 			
-			opcion = s.nextInt();
+			opcion = sc.nextInt();
+			sc.nextLine(); //flush
 			
 			if (opcion == numActual) {
 				System.out.println("¡Ya es el pokémon seleccionado!");
 			}
 			
 		} while ((opcion < 0) || (opcion > 5) || (opcion == numActual));
-		
-		s.close();
 		
 		return e.getListaPokemon().get(opcion);
 	}
@@ -208,7 +204,7 @@ public class presConsola {
 	}
 	
 	public static String preguntaCambioPorDebilitado(Jugador j) {
-		Scanner s = new Scanner (System.in);
+		
 		String opcion;
 		
 		boolean quedanNoDebilitados = false;
@@ -221,21 +217,18 @@ public class presConsola {
 		
 		if (quedanNoDebilitados) {
 			System.out.println("Tu pokémon se ha debilitado, ¿quieres sacar otro? (si/no)");
-			opcion = s.nextLine();
-			s.close();
+			opcion = sc.nextLine();
 			
 			return opcion;
 		}
 		else {
-			s.close();
-			
 			return "no";
 		}
 		
 	}
 	
 	public static int cambioPorDebilitado(Jugador j) {
-		Scanner s = new Scanner (System.in);
+		
 		int opcion;
 		
 		System.out.println("¿Qué pokémon quieres sacar al combate?");
@@ -247,10 +240,10 @@ public class presConsola {
 		}
 		
 		do {
-		opcion = s.nextInt();
-		} while (listP.get(opcion).getDebilitado());
+		opcion = sc.nextInt();
+		sc.nextLine(); //flush
 		
-		s.close();
+		} while (listP.get(opcion).getDebilitado());
 		
 		return opcion;
 	}
@@ -277,7 +270,7 @@ public class presConsola {
 		}
 	}
 	
-	private static void elegirEquipo(Scanner sc, Equipo equipoJugador, List<Pokemon> listado){
+	private static void elegirEquipo(Equipo equipoJugador, List<Pokemon> listado){
 		System.out.println("Profesor Oak: Tienes que elegir un equipo con 6 Pokémon.");
 		System.out.println("Profesor Oak: El primer pokémon que elijas, será el que combata primero.");
 		System.out.println("(Para seleccionar un Pokémon, introduce su índice)");
@@ -285,6 +278,7 @@ public class presConsola {
 		for (int i = 1; i < 7; i++) {
 			System.out.println("Pokemon " + i + ": ");
 			opcion = sc.nextInt();
+			sc.nextLine(); //flush
 			equipoJugador.addPokemon(listado.get(opcion));
 		}
 	}

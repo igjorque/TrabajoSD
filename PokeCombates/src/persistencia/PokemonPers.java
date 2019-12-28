@@ -11,7 +11,7 @@ import java.util.List;
 import dominio.*;
 
 public class PokemonPers {
-	private static String pokemon = "\\FicheroPokemon.txt";
+	private static String pokemon = "FicheroPokemon.txt";
 	
 	public static ArrayList<Pokemon> getPokemonList() {
 		
@@ -46,6 +46,45 @@ public class PokemonPers {
 		}
 		
 		return listaPoke;
+	}
+	
+	public static Pokemon encontrarPokemon(String s) {
+
+		Pokemon poke = null;
+
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(pokemon)));) {
+
+			String linea;
+			String[] lins; // LineaSplit
+			List<Movimiento> listaMov = null;
+
+			while ((linea = br.readLine()) != null) {
+				lins = linea.split(";");
+
+				while ((linea = br.readLine()) != null) {
+					lins = linea.split(";");
+
+					listaMov = new ArrayList<Movimiento>();
+					listaMov.add(MovimientoPers.encontrarMovimiento(lins[6]));
+					listaMov.add(MovimientoPers.encontrarMovimiento(lins[7]));
+					listaMov.add(MovimientoPers.encontrarMovimiento(lins[8]));
+					listaMov.add(MovimientoPers.encontrarMovimiento(lins[9]));
+
+					if (lins[0].equals(s)) {
+						poke = new Pokemon(lins[0], MetodosAuxiliares.stringToTipo(lins[1]), Integer.parseInt(lins[2]),
+								Integer.parseInt(lins[3]), Integer.parseInt(lins[4]), Integer.parseInt(lins[5]),
+								listaMov);
+					}
+				}
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return poke;
 	}
 	
 	

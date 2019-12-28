@@ -3,17 +3,18 @@ package net;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
 import java.util.List;
 
 import dominio.TablaTipos;
+import dominio.Equipo;
 import dominio.Jugador;
 import dominio.Movimiento;
 import dominio.Pokemon;
 import negocio.NegocioPokemon;
+import persistencia.PokemonPers;
 
 public class AtiendeCombate implements Runnable{
 	
@@ -37,17 +38,32 @@ public class AtiendeCombate implements Runnable{
 		
 		try(BufferedReader br1 = new BufferedReader (new InputStreamReader (s1.getInputStream(), "UTF-8"));
 				Writer w1 = new OutputStreamWriter(s1.getOutputStream(), "UTF-8");
-				ObjectInputStream ois1 = new ObjectInputStream(s1.getInputStream());
 			BufferedReader br2 = new BufferedReader (new InputStreamReader (s2.getInputStream(), "UTF-8"));
-				Writer w2 = new OutputStreamWriter(s2.getOutputStream(), "UTF-8");
-				ObjectInputStream ois2 = new ObjectInputStream(s2.getInputStream());)
+				Writer w2 = new OutputStreamWriter(s2.getOutputStream(), "UTF-8");)
 		{
-		
 			br1.readLine(); //listo j1
-			this.j1 = (Jugador) ois1.readObject();
+			String lineaDatosJ1 = br1.readLine();
+			String [] lineaDatosJ1Split = lineaDatosJ1.split("|");
+			Equipo equipoJ1aux = new Equipo();
+			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[1]));
+			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[2]));
+			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[3]));
+			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[4]));
+			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[5]));
+			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[6]));
+			this.j1 = new Jugador(lineaDatosJ1Split[0], equipoJ1aux);
 			
 			br2.readLine(); //listo j2
-			this.j2 = (Jugador) ois2.readObject();
+			String lineaDatosJ2 = br2.readLine();
+			String [] lineaDatosJ2Split = lineaDatosJ2.split("|");
+			Equipo equipoJ2aux = new Equipo();
+			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[1]));
+			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[2]));
+			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[3]));
+			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[4]));
+			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[5]));
+			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[6]));
+			this.j2 = new Jugador(lineaDatosJ2Split[0], equipoJ2aux);
 			
 			w1.write("Empieza\r\n");
 			w2.write("Empieza\r\n");
@@ -263,9 +279,6 @@ public class AtiendeCombate implements Runnable{
 		{
 			e.printStackTrace();
 		} 
-		catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
 		
 	}
 	

@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.Writer;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.io.OutputStreamWriter;
 
 import dominio.Jugador;
@@ -42,77 +43,85 @@ public class PokeClient {
 			Socket sFich = new Socket(this.host, this.puertoFicheros);
 				ObjectInputStream ois = new ObjectInputStream(sFich.getInputStream());) 
 		{
-			
+				
 			ArrayList<Pokemon> listaPoke = (ArrayList<Pokemon>) ois.readObject();
 			ArrayList<Movimiento> listaMov = (ArrayList<Movimiento>) ois.readObject();
 			jugador = presConsola.menuCreacionJugador(listaPoke, listaMov);
+
+			List<Pokemon> listPAux = jugador.getEquipoPokemon().getListaPokemon();
 			
-			//Avisa al servidor de que está preparado
+			w.write(jugador.getNombre() + "|" + listPAux.get(0).getNombre() + "|" + listPAux.get(1).getNombre() + "|" + listPAux.get(2).getNombre() + "|" +
+					listPAux.get(3).getNombre() + "|" + listPAux.get(4).getNombre() + "|" + listPAux.get(5).getNombre() + "\r\n"); 
+					
+			
+			// Avisa al servidor de que está preparado
 			w.write("Listo\r\n");
 			oosC.writeObject(jugador);
 			presConsola.mostrarEspera();
-			
-			if (brComb.readLine().equals("Empieza")) {
+
+			brComb.readLine(); //empieza
 				int opcion;
 				int imov;
-				
+
 				Pokemon pok = null;
 				Movimiento mov = null;
 				boolean ren = false;
-				
+
 				while (this.finalizar == false) {
 					opcion = presConsola.menuAcciones();
 					switch (opcion) {
-						case 1: 
-							imov = presConsola.menuMovimientos(jugador.getSeleccionado());
-							mov = jugador.getSeleccionado().getMovimientos().get(imov);
-							break;
-						case 2:
-							pok = presConsola.menuCambiarPokemon(jugador.getSeleccionado(), jugador.getEquipoPokemon());
-							break;
-						case 3:
-							ren = true;
-							break;
+					case 1:
+						imov = presConsola.menuMovimientos(jugador.getSeleccionado());
+						mov = jugador.getSeleccionado().getMovimientos().get(imov);
+						break;
+					case 2:
+						pok = presConsola.menuCambiarPokemon(jugador.getSeleccionado(), jugador.getEquipoPokemon());
+						break;
+					case 3:
+						ren = true;
+						break;
 					}
-					
+
 					protocoloCliente(w, mov, pok, ren);
-					
+
 					///////////////////////
-					
-					brComb.readLine(); //Inicio
-					
-					brComb.readLine(); //Daño j1
+
+					brComb.readLine(); // Inicio
+
+					brComb.readLine(); // Daño j1
 					String lineaDanno1 = brComb.readLine();
-					String [] lineaDanno1Split;
+					String[] lineaDanno1Split;
 					if (!lineaDanno1.equals("nulo")) {
 						lineaDanno1Split = lineaDanno1.split("|");
-						presConsola.mostrarDannos(lineaDanno1Split[0], lineaDanno1Split[1], Integer.parseInt(lineaDanno1Split[2]), Float.parseFloat(lineaDanno1Split[3]));
+						presConsola.mostrarDannos(lineaDanno1Split[0], lineaDanno1Split[1],
+								Integer.parseInt(lineaDanno1Split[2]), Float.parseFloat(lineaDanno1Split[3]));
 					}
-					
-					brComb.readLine(); //Daño j2
+
+					brComb.readLine(); // Daño j2
 					String lineaDanno2 = brComb.readLine();
-					String [] lineaDanno2Split;
+					String[] lineaDanno2Split;
 					if (!lineaDanno2.equals("nulo")) {
 						lineaDanno2Split = lineaDanno2.split("|");
-						presConsola.mostrarDannos(lineaDanno2Split[0], lineaDanno2Split[1], Integer.parseInt(lineaDanno2Split[2]), Float.parseFloat(lineaDanno2Split[3]));
+						presConsola.mostrarDannos(lineaDanno2Split[0], lineaDanno2Split[1],
+								Integer.parseInt(lineaDanno2Split[2]), Float.parseFloat(lineaDanno2Split[3]));
 					}
-					
-					brComb.readLine(); //Debilitado j1
+
+					brComb.readLine(); // Debilitado j1
 					String lineaDeb1 = brComb.readLine();
 					if (!lineaDanno1.equals("nulo")) {
 						presConsola.mostrarDebilitado(lineaDeb1);
 					}
-					
-					brComb.readLine(); //Debilitado j2
+
+					brComb.readLine(); // Debilitado j2
 					String lineaDeb2 = brComb.readLine();
 					if (!lineaDanno2.equals("nulo")) {
 						presConsola.mostrarDebilitado(lineaDeb2);
 					}
-					
-					brComb.readLine(); //Fin
-					
+
+					brComb.readLine(); // Fin
+
 					////////////////////////
-					
+
 					if (brComb.readLine().equals("DebilitadoCambio")) {
 						String respuestaSiNo = presConsola.preguntaCambioPorDebilitado(this.jugador);
 						if (respuestaSiNo.equals("si")) {
@@ -120,37 +129,34 @@ public class PokeClient {
 							w.write(pokeElegido);
 						}
 					}
-					
+
 					///////////////////////
-					
+
 					if (brComb.readLine().equals("CombFinalizado")) {
 						this.finalizar = true;
 					}
-					
+
 				}
-				
+
 				String resultadoJ1 = brComb.readLine();
 				String resultadoJ2 = brComb.readLine();
-				
-				String [] resultadoJ1Split = resultadoJ1.split("|");
-				String [] resultadoJ2Split = resultadoJ2.split("|");
-				
+
+				String[] resultadoJ1Split = resultadoJ1.split("|");
+				String[] resultadoJ2Split = resultadoJ2.split("|");
+
 				if (resultadoJ1Split[1].equals("Gana")) {
 					presConsola.ganar(resultadoJ1Split[0]);
-				}
-				else {
+				} else {
 					presConsola.perder(resultadoJ1Split[0]);
 				}
-				
+
 				if (resultadoJ2Split[1].equals("Gana")) {
 					presConsola.ganar(resultadoJ2Split[0]);
-				}
-				else {
+				} else {
 					presConsola.perder(resultadoJ2Split[0]);
 				}
-				
-				
-			}
+
+			
 			
 			
 		} catch (IOException e) {
@@ -166,7 +172,7 @@ public class PokeClient {
 
 			w.write("Movimiento\r\n");
 			if (m != null) {
-				w.write(m.getNombre() + "\r\\n");
+				w.write(m.getNombre() + "\r\n");
 			} else {
 				w.write("nulo\r\n");
 			}

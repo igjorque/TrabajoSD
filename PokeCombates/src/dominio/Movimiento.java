@@ -63,8 +63,8 @@ public class Movimiento implements Serializable {
 	@Override
 	public String toString() {
 		return "Nombre: " + this.nombre + " Tipo: " + this.tipo + 
-				"\r\n     PP: " + this.PP + " Potencia:" + this.potencia + 
-				"\r\n     Precisión: " + this.precision + " Prioridad: " + this.prioridad + 
+				"\r\n     PP: " + this.PP + ", Potencia: " + this.potencia + 
+				"\r\n     Precisión: " + this.precision + ", Prioridad: " + this.prioridad + 
 				"\r\n     Descripción: " + this.descripcion + 
 				"\r\n";
 	}

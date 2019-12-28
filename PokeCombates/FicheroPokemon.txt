@@ -1,5 +1,3 @@
 Charmander;Fuego;39;52;43;65;Aranazo;Ascuas;Colmillo igneo;Cuchillada
 Squirtle;Agua;44;48;65;43;Placaje;Burbuja;Pistola agua;Giro rapido
 Bulbasaur;Planta;45;49;49;45;Placaje;Latigo cepa;Hoja afilada;Aranazo
-
-

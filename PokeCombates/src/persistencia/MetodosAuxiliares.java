@@ -12,6 +12,8 @@ public class MetodosAuxiliares {
 				return Tipo.Agua;
 			case "Planta":
 				return Tipo.Planta;
+			case "Normal":
+				return Tipo.Normal;
 			default:
 				return null;
 		}

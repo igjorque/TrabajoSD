@@ -11,7 +11,7 @@ import dominio.*;
 
 public class MovimientoPers {
 
-	private static String movimientos = "\\FicheroMovimientos.txt";
+	private static String movimientos = "FicheroMovimientos.txt";
 	
 	public static ArrayList<Movimiento> getMovimientoList() {
 		

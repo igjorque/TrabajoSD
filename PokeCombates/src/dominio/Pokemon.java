@@ -76,8 +76,7 @@ public class Pokemon implements Serializable {
 	@Override
 	public String toString() {
 		return "Nombre: " + this.nombre + " Tipo: " + this.tipo + 
-				"\r\n     PS: " + this.ps + " Ataque: " + this.ataque + 
-				"\r\n     Defensa: " + this.defensa + " Velocidad: " + this.velocidad + 
-				"\r\n";
+				"\r\n     PS: " + this.ps + " Ataque: " + this.ataque + " Defensa: " + this.defensa + " Velocidad: " + this.velocidad + "\r\n" +
+				"Movimientos:\r\n" + this.movimientos.toString() + "\r\n";
 	}
 }

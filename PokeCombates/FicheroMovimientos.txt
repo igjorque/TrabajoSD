@@ -1,1 +1,10 @@
-nombre;tipo;descripcion;pp;potencia;precision;prioridad
+Aranazo;Normal;Rasguña al pokémon enemigo con afiladas zarpas.;35;40;100;0
+Ascuas;Fuego;Lanza una pequeña llama al pokémon enemigo.;25;40;100;0
+Colmillo igneo;Fuego;Muerde al pokémon enemigo con un aliento abrasador.;15;65;95;0
+Cuchillada;Normal;Lanza una estocada afilada al enemigo.;20;70;100;0
+Placaje;Normal;Embiste al pokémon enemigo.;35;40;100;0
+Burbuja;Agua;Lanza burbujas al pokémon rival.;30;40;100;0
+Pistola agua;Agua;Lanza un chorro de agua a presión.;25;40;100;0
+Giro rapido;Normal;Gira a gran velocidad para dañar al enemigo.;40;20;100;0
+Latigo cepa;Planta;Fustiga al pokémon rival.;25;45;100;0
+Hoja afilada;Planta;Lanza hojas que dañan al rival.;25;55;95;0

@@ -52,12 +52,12 @@ public class ServiciosPokemon {
 		return p.getNombre() + " - Tipo: " + p.getTipo() + "\r\nEstadísticas:\r\n" +
 				"	PS: " + p.getPs() + "\r\n	Ataque: " + p.getAtaque() + "\r\n	Defensa: " +
 				p.getDefensa() + "\r\n	Velocidad: " + p.getVelocidad() + "\r\nMovimientos: " +
-				p.getMovimientos().toString();
+				p.getMovimientos().toString() + "\r\n";
 	}
 	
 	public String mostrarMovimiento (Movimiento m) {
 		return m.getNombre() + " - Tipo: " + m.getTipo() + "\r\nEstadísticas:\r\n" + 
 				"	PP: " + m.getPP() + "\r\n	Potencia: " + m.getPotencia() + "\r\n	Precisión: " +
-				m.getPrecision() + "\r\n	Prioridad: " + m.getPrioridad();
+				m.getPrecision() + "\r\n	Prioridad: " + m.getPrioridad() + "\r\n";
 	}
 }
