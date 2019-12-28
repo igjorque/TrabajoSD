@@ -3,37 +3,31 @@ package net;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 
 import dominio.TablaTipos;
 import dominio.Jugador;
 import dominio.Movimiento;
 import dominio.Pokemon;
 import negocio.NegocioPokemon;
-import persistencia.MovimientoPers;
 
 public class AtiendeCombate implements Runnable{
 	
 	private Socket s1;
 	private Socket s2;
-	private CyclicBarrier barrera;
 	private Jugador j1;
 	private Jugador j2;
 	
 	private NegocioPokemon np = new NegocioPokemon();
 	private TablaTipos tabla = new TablaTipos();
 	
-	public AtiendeCombate(Socket conexion1, Socket conexion2, CyclicBarrier barrera, Jugador j1, Jugador j2) {
+	public AtiendeCombate(Socket conexion1, Socket conexion2) {
 		this.s1 = conexion1;
 		this.s2 = conexion2;
-		this.barrera = barrera;
-		this.j1 = j1;
-		this.j2 = j2;
 	}
 	
 	@Override
@@ -43,17 +37,20 @@ public class AtiendeCombate implements Runnable{
 		
 		try(BufferedReader br1 = new BufferedReader (new InputStreamReader (s1.getInputStream(), "UTF-8"));
 				Writer w1 = new OutputStreamWriter(s1.getOutputStream(), "UTF-8");
+				ObjectInputStream ois1 = new ObjectInputStream(s1.getInputStream());
 			BufferedReader br2 = new BufferedReader (new InputStreamReader (s2.getInputStream(), "UTF-8"));
-				Writer w2 = new OutputStreamWriter(s2.getOutputStream(), "UTF-8");)
+				Writer w2 = new OutputStreamWriter(s2.getOutputStream(), "UTF-8");
+				ObjectInputStream ois2 = new ObjectInputStream(s2.getInputStream());)
 		{
+		
+			br1.readLine(); //listo j1
+			this.j1 = (Jugador) ois1.readObject();
 			
-			barrera.await(); // Aqui el hilo espera a que dos hilos estén en el mismo punto
-			/*
-				Gestiona el combate (?). Añadir ¿barrier? para esperar a otro cliente (?). Pensar implementacion. ¿Identificador de combate para no mezclar clientes?
-				
-				Ocurren cosas y manda mensaje
-				protocoloEnviarDatos(w, dan1, dan2, deb1, deb2);
-			*/
+			br2.readLine(); //listo j2
+			this.j2 = (Jugador) ois2.readObject();
+			
+			w1.write("Empieza\r\n");
+			w2.write("Empieza\r\n");
 			
 			while (comprobarFinalizado(this.np, this.j1, this.j2) == false) 
 			{
@@ -209,16 +206,11 @@ public class AtiendeCombate implements Runnable{
 				protocoloServidor(w2, j1, j2, ataqueExito1, ataqueExito2, deb1, deb2);
 				
 				if (deb1 == true) {
+					w1.write("DebilitadoCambio");
 					String respuesta = br1.readLine();
 					if (respuesta.equals("si")) {
-						String lineaPokemon = br1.readLine();
-						Pokemon po1 = null;
-						List<Pokemon> listPoke = this.j1.getEquipoPokemon().getListaPokemon();
-						for (int i = 0; i < listPoke.size(); i++) {
-							if (listPoke.get(i).getNombre().equals(lineaPokemon)) {
-								po1 = listPoke.get(i);
-							}
-						}
+						int lineaPokemon1 = Integer.parseInt(br1.readLine());
+						Pokemon po1 = this.j1.getEquipoPokemon().getListaPokemon().get(lineaPokemon1);
 						np.getServiciosEquipo().cambiarPokemon(j1, po1);
 					}
 					else {
@@ -227,16 +219,11 @@ public class AtiendeCombate implements Runnable{
 				}
 				
 				if (deb2 == true) {
+					w2.write("DebilitadoCambio");
 					String respuesta = br2.readLine();
 					if (respuesta.equals("si")) {
-						String lineaPokemon = br2.readLine();
-						Pokemon po2 = null;
-						List<Pokemon> listPoke = this.j2.getEquipoPokemon().getListaPokemon();
-						for (int i = 0; i < listPoke.size(); i++) {
-							if (listPoke.get(i).getNombre().equals(lineaPokemon)) {
-								po2 = listPoke.get(i);
-							}
-						}
+						int lineaPokemon2 = Integer.parseInt(br2.readLine());
+						Pokemon po2 = this.j2.getEquipoPokemon().getListaPokemon().get(lineaPokemon2);
 						np.getServiciosEquipo().cambiarPokemon(j2, po2);
 					}
 					else {
@@ -246,6 +233,29 @@ public class AtiendeCombate implements Runnable{
 				
 			}
 			
+			//FINALIZA COMBATE
+			
+			w1.write("CombFinalizado");
+			w2.write("CombFinalizado");
+			
+			boolean debJugador1 = np.getServiciosEquipo().equipoDebilitado(j1.getEquipoPokemon());
+			boolean debJugador2 = np.getServiciosEquipo().equipoDebilitado(j2.getEquipoPokemon());
+			
+			if (debJugador1 && (!debJugador2)) {
+				w1.write(j1.getNombre() + "|Pierde\r\n");
+				w2.write(j2.getNombre() + "|Gana\r\n");
+			}
+				
+			if ((!debJugador1) && debJugador2) {
+				w1.write(j1.getNombre() + "|Gana\r\n");
+				w2.write(j2.getNombre() + "|Pierde\r\n");
+			}
+				
+			if (debJugador1 && debJugador2) {
+				w1.write(j1.getNombre() + "|Pierde\r\n");
+				w2.write(j2.getNombre() + "|Pierde\r\n");
+			}
+			
 			
 		} 
 		
@@ -253,14 +263,7 @@ public class AtiendeCombate implements Runnable{
 		{
 			e.printStackTrace();
 		} 
-		
-		catch (InterruptedException e) 
-		{
-			e.printStackTrace();
-		} 
-		
-		catch (BrokenBarrierException e) 
-		{
+		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		
@@ -272,14 +275,14 @@ public class AtiendeCombate implements Runnable{
 			
 			w.write("DannoJ1\r\n");
 			if (danno1 != 0) {
-				w.write(j1.getNombre() + "|" + danno1 + "\r\n");
+				w.write(j1.getNombre() + "|" + j1.getSeleccionado().getNombre() + "|" + j1.getSeleccionado().getPs() + "|" + danno1 + "\r\n");
 			} else {
 				w.write("nulo\r\n");
 			}
 
 			w.write("DannoJ2\r\n");
 			if (danno2 != 0) {
-				w.write(j2.getNombre() + "|" + danno2 + "\r\n");
+				w.write(j2.getNombre() + "|" + j2.getSeleccionado().getNombre() + "|" + j2.getSeleccionado().getPs() + "|" + danno2 + "\r\n");
 			} else {
 				w.write("nulo\r\n");
 			}

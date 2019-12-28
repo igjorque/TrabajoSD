@@ -3,6 +3,7 @@ package dominio;
 import java.io.Serializable;
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class Pokemon implements Serializable {
 
 	private String nombre;

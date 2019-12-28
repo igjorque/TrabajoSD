@@ -1,8 +1,5 @@
 package principal;
 
-import net.PokeClient;
-import presentacion.presConsola;
-
 public class Principal {
 
 	public static void main(String[] args) {

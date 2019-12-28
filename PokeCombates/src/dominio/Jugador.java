@@ -1,6 +1,9 @@
 package dominio;
 
-public class Jugador {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class Jugador implements Serializable {
 	
 	private String nombre;
 	private Equipo equipoPokemon;

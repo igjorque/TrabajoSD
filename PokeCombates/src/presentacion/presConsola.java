@@ -127,6 +127,8 @@ public class presConsola {
 			opcion = s.nextInt();
 		} while ((opcion < 1) || (opcion > 3));
 		
+		s.close();
+		
 		return opcion;
 	}
 	
@@ -144,6 +146,8 @@ public class presConsola {
 			
 			opcion = s.nextInt();
 		} while ((opcion < 0) || (opcion > 4));
+		
+		s.close();
 		
 		return opcion;
 	}
@@ -190,23 +194,73 @@ public class presConsola {
 			
 		} while ((opcion < 0) || (opcion > 5) || (opcion == numActual));
 		
+		s.close();
+		
 		return e.getListaPokemon().get(opcion);
 	}
 	
-	public static void mostrarDannos(Jugador j, float d) {
-		System.out.println("El pokémon " + j.getSeleccionado().getNombre() + " de " + j.getNombre() + " ha recibido " + d + " de daño.");
+	public static void mostrarDannos(String j, String poke, int vida, float d) {
+		System.out.println("El pokémon " + poke + " de " + j + " ha recibido " + d + " de daño, le queda " + vida + " de vida.");
 	}
 	
-	public static void mostrarDebilitado(Jugador j) {
-		System.out.println("¡El pokémon " + j.getSeleccionado().getNombre() + " de " + j.getNombre() + " se ha debilitado!");
+	public static void mostrarDebilitado(String j) {
+		System.out.println("¡El pokémon de " + j + " se ha debilitado!");
 	}
 	
-	public static void perder() {
-		System.out.println("¡Has perdido! Más suerte la próxima vez.");
+	public static String preguntaCambioPorDebilitado(Jugador j) {
+		Scanner s = new Scanner (System.in);
+		String opcion;
+		
+		boolean quedanNoDebilitados = false;
+		List<Pokemon> listP = j.getEquipoPokemon().getListaPokemon();
+		for (int i = 0; i < listP.size(); i++) {
+			if (listP.get(i).getDebilitado() == false) {
+				quedanNoDebilitados = true;
+			}
+		}
+		
+		if (quedanNoDebilitados) {
+			System.out.println("Tu pokémon se ha debilitado, ¿quieres sacar otro? (si/no)");
+			opcion = s.nextLine();
+			s.close();
+			
+			return opcion;
+		}
+		else {
+			s.close();
+			
+			return "no";
+		}
+		
 	}
 	
-	public static void ganar() {
-		System.out.println("¡Felicidades, eres el mejor entrenador pokémon!");
+	public static int cambioPorDebilitado(Jugador j) {
+		Scanner s = new Scanner (System.in);
+		int opcion;
+		
+		System.out.println("¿Qué pokémon quieres sacar al combate?");
+		List<Pokemon> listP = j.getEquipoPokemon().getListaPokemon();
+		for (int i = 0; i < listP.size(); i++) {
+			if (listP.get(i).getDebilitado() == false) {
+				System.out.println(i + " " + listP.get(i).getNombre());
+			}
+		}
+		
+		do {
+		opcion = s.nextInt();
+		} while (listP.get(opcion).getDebilitado());
+		
+		s.close();
+		
+		return opcion;
+	}
+	
+	public static void perder(String j) {
+		System.out.println(j + ": ¡Has perdido! Más suerte la próxima vez.");
+	}
+	
+	public static void ganar(String j) {
+		System.out.println(j + ": ¡Felicidades, eres el mejor entrenador pokémon!");
 	}
 	
 	private static void mostrarListadoPoke(List<Pokemon> listado) {

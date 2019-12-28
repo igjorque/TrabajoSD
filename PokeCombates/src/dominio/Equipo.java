@@ -1,9 +1,11 @@
 package dominio;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Equipo {
+@SuppressWarnings("serial")
+public class Equipo implements Serializable {
 	
 	private List<Pokemon> listaPokemon;
 	

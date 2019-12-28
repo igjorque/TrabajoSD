@@ -2,6 +2,7 @@ package dominio;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Movimiento implements Serializable {
 	
 	private String nombre;
