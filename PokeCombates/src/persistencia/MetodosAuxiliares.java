@@ -4,6 +4,7 @@ import dominio.*;
 
 public class MetodosAuxiliares {
 
+	// Método encargado de la conversión de string al tipo enumeración Tipo.
 	public static Tipo stringToTipo(String s) {
 		switch(s) {
 			case "Fuego":

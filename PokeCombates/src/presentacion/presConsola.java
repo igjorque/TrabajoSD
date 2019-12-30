@@ -11,6 +11,7 @@ public class presConsola {
 
 	private static Scanner sc = new Scanner(System.in);
 	
+	// Método estático encargado de presentar un menú de creación a un jugador. Devuelve un objeto de tipo Jugador con los datos introducidos.
 	public static Jugador menuCreacionJugador (ArrayList<Pokemon> lPoke, ArrayList<Movimiento> lMov) {
 		
 		Jugador jugador;
@@ -112,10 +113,12 @@ public class presConsola {
 		return jugador;
 	}
 	
+	// Método encargado de mostrar una espera al jugador.
 	public static void mostrarEspera() {
 		System.out.println("Esperando...");
 	}
 	
+	// Método encargado de mostrar un menú de elección de acciones, tales como atacar (elegir movimiento), cambiar pokémon, o rendirse.
 	public static int menuAcciones() {
 		
 		int opcion;
@@ -133,6 +136,7 @@ public class presConsola {
 		return opcion;
 	}
 	
+	// Método encargado de mostrar un menú con los movimientos disponibles a elegir.
 	public static int menuMovimientos(Pokemon p) {
 		
 		int opcion;
@@ -151,6 +155,7 @@ public class presConsola {
 		return opcion;
 	}
 	
+	// Método encargado de mostrar un menú con los pokémon a cambiar.
 	public static Pokemon menuCambiarPokemon (Pokemon actual, Equipo e) {
 		
 		int opcion;
@@ -199,18 +204,23 @@ public class presConsola {
 		return e.getListaPokemon().get(opcion);
 	}
 	
+	// Método encargado de mostrar un daño aplicado a un pokémon, así como la vida que le queda.
 	public static void mostrarDannos(String j, String poke, int vida, float d) {
 		System.out.println("El pokémon " + poke + " de " + j + " ha recibido " + (int) d + " de daño, le queda " + vida + " de vida.");
 	}
 	
+	// Método encargado de mostrar si un pokémon se ha debilitado.
 	public static void mostrarDebilitado(String j) {
 		System.out.println("¡El pokémon de " + j + " se ha debilitado!");
 	}
 	
+	// Método encargado de mostrar si ha habido algún cambio de pokémon.
 	public static void mostrarCambioPokemon(String j, String poke) {
 		System.out.println("El jugador " + j + " ha cambiado al pokémon por " + poke);
 	}
 	
+	// Método encargado de preguntar si un jugador desea realizar un cambio de pokémon tras ser este debilitado.
+	// Si no le quedan pokémon sin debilitar, devuelve no. En caso contrario, devuelve la respuesta del jugador.
 	public static String preguntaCambioPorDebilitado(Jugador j) {
 		
 		String opcion;
@@ -235,6 +245,7 @@ public class presConsola {
 		
 	}
 	
+	// Método encargado de gestionar el cambio de pokémon al resultar debilitado.
 	public static int cambioPorDebilitado(Jugador j) {
 		
 		int opcion;
@@ -256,14 +267,17 @@ public class presConsola {
 		return opcion;
 	}
 	
+	// Método encargado de mostrar un mensaje de derrota.
 	public static void perder(String j) {
 		System.out.println(j + ": ¡Has perdido! Más suerte la próxima vez.");
 	}
 	
+	// Método encargado de mostrar un mensaje de victoria.
 	public static void ganar(String j) {
 		System.out.println(j + ": ¡Felicidades, eres el mejor entrenador pokémon!");
 	}
 	
+	// Método encargado de mostrar el listado de pokémon disponibles.
 	private static void mostrarListadoPoke(List<Pokemon> listado) {
 		System.out.println("Profesor Oak: Voy a mostrarte los que tengo disponibles:");
 		for (int i = 1; i < listado.size()+1; i++) {
@@ -271,6 +285,7 @@ public class presConsola {
 		}
 	}
 	
+	// Método encargado de mostrar el listado de movimientos disponibles.
 	private static void mostrarListadoMovi(List<Movimiento> listado) {
 		System.out.println("Profesor Oak: Voy a mostrarte los que conocemos:");
 		for (int i = 1; i<listado.size()+1; i++) {
@@ -278,6 +293,7 @@ public class presConsola {
 		}
 	}
 	
+	// Método encargado de gestionar la elección del equipo del jugador.
 	private static void elegirEquipo(Equipo equipoJugador, List<Pokemon> listado){
 		System.out.println("Profesor Oak: Tienes que elegir un equipo con 6 Pokémon.");
 		System.out.println("Profesor Oak: El primer pokémon que elijas, será el que combata primero.");

@@ -2,6 +2,7 @@ package principal;
 
 import net.PokeClient;
 
+// Ejecuta el cliente.
 public class Principal {
 
 	public static void main(String[] args) {

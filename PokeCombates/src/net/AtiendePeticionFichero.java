@@ -9,6 +9,9 @@ import dominio.*;
 import persistencia.MovimientoPers;
 import persistencia.PokemonPers;
 
+// Clase encargada de la gestión de la comunicación entre el cliente y el servidor de ficheros.
+// Obtiene las listas de pokémon y movimientos de la capa de persistencia, y se las transmite al cliente.
+
 public class AtiendePeticionFichero implements Runnable {
 	
 	private Socket conexion;

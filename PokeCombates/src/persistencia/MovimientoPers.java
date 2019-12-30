@@ -13,6 +13,7 @@ public class MovimientoPers {
 
 	private static String movimientos = "FicheroMovimientos.txt";
 	
+	// Obtiene una lista con todos los objetos Movimiento almacenados en la base de datos (fichero).
 	public static ArrayList<Movimiento> getMovimientoList() {
 		
 		ArrayList<Movimiento> listaMov = new ArrayList<Movimiento>();
@@ -42,6 +43,7 @@ public class MovimientoPers {
 		return listaMov;
 	}
 	
+	// Método encargado de obtener un movimiento concreto de la base de datos (fichero).
 	public static Movimiento encontrarMovimiento(String s) {
 		
 		Movimiento mov = null;

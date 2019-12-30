@@ -15,8 +15,11 @@ import dominio.Pokemon;
 import negocio.NegocioPokemon;
 import persistencia.PokemonPers;
 
+// Clase encargada de la gestión del combate pokémon.
+
 public class AtiendeCombate implements Runnable{
 	
+	// Variables globales del programa.
 	private Socket s1;
 	private Socket s2;
 	private Jugador j1;
@@ -33,6 +36,7 @@ public class AtiendeCombate implements Runnable{
 	@Override
 	public void run() {
 		
+		// Variables del programa.
 		String lineaMovimiento1, lineaMovimiento2;
 		String lineaCambiar1, lineaCambiar2;
 		String lineaRendir1, lineaRendir2;
@@ -54,6 +58,8 @@ public class AtiendeCombate implements Runnable{
 		
 		this.tabla.rellenarTabla();
 		
+		// Cuerpo principal del programa. Gestiona la comunicación mediante "protocolos" creados.
+		// Cuenta con 2 pares de BufferedReader y PrintWriter, cada par encargado de la comunicación con uno de los dos clientes.
 		try(BufferedReader br1 = new BufferedReader (new InputStreamReader (s1.getInputStream()));
 				PrintWriter w1 = new PrintWriter(s1.getOutputStream(), true);
 			BufferedReader br2 = new BufferedReader (new InputStreamReader (s2.getInputStream()));
@@ -63,6 +69,8 @@ public class AtiendeCombate implements Runnable{
 			br1.readLine(); //Recibe esta línea porque envía caracteres extraños y no sabemos el motivo.
 			br2.readLine(); //Recibe esta línea porque envía caracteres extraños y no sabemos el motivo.
 			
+			
+			// Comienza obteniendo los datos de los jugadores. Utiliza la persistencia para crearlos.
 			String lineaDatosJ1 = br1.readLine();
 			String [] lineaDatosJ1Split = lineaDatosJ1.split(";");
 			Equipo equipoJ1aux = new Equipo();
@@ -92,9 +100,12 @@ public class AtiendeCombate implements Runnable{
 			
 			boolean comprobacionFinalizado = comprobarFinalizado(this.np, this.j1, this.j2);
 			
+			// Mientras que el combate no haya finalizado, repetirá este bucle.
 			while (comprobacionFinalizado == false) 
 			{
-				///////////////////////////Lee protocolo cliente
+				// En primer lugar, recibe, desglosa y almacena los datos recibidos del protocolo del cliente.
+				
+				/////////////////////////// Lee protocolo cliente. 
 				//DATOS J1
 				br1.readLine(); //Lee inicio j1
 				br1.readLine(); //Lee movimiento j1 
@@ -170,6 +181,9 @@ public class AtiendeCombate implements Runnable{
 				
 				//////////////////////////////////// fin leer protocolo cliente
 				
+				// En segundo lugar, interpreta los datos recibidos.
+				// Según la casuística, realizará unas acciones u otras, algunas de ellas en órdenes establecidos por los datos recibidos.
+				
 				if (p1 != null) {
 					np.getServiciosEquipo().cambiarPokemon(j1, p1);
 				}
@@ -236,6 +250,8 @@ public class AtiendeCombate implements Runnable{
 				deb1 = j1.getSeleccionado().getDebilitado();
 				deb2 = j2.getSeleccionado().getDebilitado();
 				
+				// En tercer lugar, comunicará los resultados de los cálculos a ambos clientes. Estos deberán interpretar los mensajes recibidos correctamente.
+				
 				protocoloServidor(w1, j1, j2, p1, p2, ataqueExito1, ataqueExito2, deb1, deb2);
 				protocoloServidor(w2, j1, j2, p1, p2, ataqueExito1, ataqueExito2, deb1, deb2);
 				
@@ -282,6 +298,9 @@ public class AtiendeCombate implements Runnable{
 					}
 				}
 				
+				
+				// Control de variables del programa. Aunque de algunas ya se controle su valor, volvemos a controlarlo antes de reentrar al bucle por motivos de seguridad.
+				// (algunos métodos no funcionan como deberían sin este control, provocando errores en la ejecución)
 				p1 = null;
 				p2 = null;
 				m1 = null;
@@ -294,6 +313,8 @@ public class AtiendeCombate implements Runnable{
 				prioridadM2 = -1;
 				
 			}
+			
+			// Al finalizar el combate, envía mensajes apropiados a cada cliente según el resultado del mismo.
 			
 			//FINALIZA COMBATE
 			
@@ -337,6 +358,8 @@ public class AtiendeCombate implements Runnable{
 		
 	}
 	
+	// Protocolo de envío de mensajes del servidor. Como todo protocolo, se compone de una serie de cabeceras, y sus respectivos cuerpos.
+	// La utilidad de éste es el evío de mensajes con estructura fija, más facil de controlar e interpretar en el cliente. 
 	private static void protocoloServidor(PrintWriter w, Jugador j1, Jugador j2, Pokemon p1, Pokemon p2, float danno2, float danno1, boolean deb1, boolean deb2) {
 
 		w.println("MensajeInicio");
@@ -391,6 +414,7 @@ public class AtiendeCombate implements Runnable{
 		
 	}
 	
+	// Método encargado de comprobar si el combate ha finalizado. Devuelve TRUE si es así, FALSE en caso contrario.
 	private static boolean comprobarFinalizado (NegocioPokemon np, Jugador j1, Jugador j2) {
 		boolean pierdeJ1 = np.getServiciosEquipo().equipoDebilitado(j1.getEquipoPokemon());
 		boolean pierdeJ2 = np.getServiciosEquipo().equipoDebilitado(j2.getEquipoPokemon());

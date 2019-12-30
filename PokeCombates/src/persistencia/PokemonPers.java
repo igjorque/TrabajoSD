@@ -13,6 +13,7 @@ import dominio.*;
 public class PokemonPers {
 	private static String pokemon = "FicheroPokemon.txt";
 	
+	// Método encargado de obtener un listado con todos los objetos de tipo Pokémon almacenados en la base de datos (fichero).
 	public static ArrayList<Pokemon> getPokemonList() {
 		
 		ArrayList<Pokemon> listaPoke = new ArrayList<Pokemon>();
@@ -48,6 +49,7 @@ public class PokemonPers {
 		return listaPoke;
 	}
 	
+	// Método encargado de obtener un Pokémon concreto de la base de datos (fichero).
 	public static Pokemon encontrarPokemon(String s) {
 
 		Pokemon poke = null;

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+// Servidor encargado de proveer el servicio de combate pokémon. Inicia un nuevo hilo encargado de la gestión del combate en cuanto recibe a dos clientes.
+
 public class PokeServer {
 
 	public static void main(String[] args) {

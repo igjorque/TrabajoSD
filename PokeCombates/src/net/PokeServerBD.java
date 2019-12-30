@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+// Servidor encargado de proveer listas de pokémon y movimientos. Inicia un hilo al recibir una petición que se encargará de gestionar la comunicación.
+
 public class PokeServerBD {
 
 	public static void main(String[] args) {

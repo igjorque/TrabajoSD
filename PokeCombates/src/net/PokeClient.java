@@ -35,7 +35,13 @@ public class PokeClient {
 	}
 
 	@SuppressWarnings("unchecked")
+	// Método encargado de la ejecución del cliente. Utilizará la presentación por consola (clase presConsola) 
+	// para gestionar la creación del jugador, comunicarse con el servidor de combate e interpretar los mensajes 
+	// protocolarios recibidos.
 	public void ejecutar() {
+		
+		// Variables del programa
+		
 		String lineaCambio1, lineaCambio2;
 		String [] lineaCambio1Split; 
 		String [] lineaCambio2Split;
@@ -47,23 +53,28 @@ public class PokeClient {
 		String preguntaDeb;
 		String respuestaSiNo;
 		
-		
-		
+		// Cuerpo principal del programa.
 		
 		try(Socket sComb = new Socket(this.host, this.puerto);
 				BufferedReader brComb = new BufferedReader (new InputStreamReader (sComb.getInputStream()));
 				PrintWriter w = new PrintWriter(sComb.getOutputStream(), true);
 				ObjectOutputStream oosC = new ObjectOutputStream(sComb.getOutputStream());
-			Socket sFich = new Socket(this.host, this.puertoFicheros);
+				Socket sFich = new Socket(this.host, this.puertoFicheros);
 				ObjectInputStream ois = new ObjectInputStream(sFich.getInputStream());) 
 		{
 			w.println(".");	//Envía esta línea porque recibe caracteres extraños y no sabemos el motivo.
 			
 			ArrayList<Pokemon> listaPoke = (ArrayList<Pokemon>) ois.readObject();
 			ArrayList<Movimiento> listaMov = (ArrayList<Movimiento>) ois.readObject();
+			
+			// Comienza creando el jugador mediante la presentación por consola.
+			
 			jugador = presConsola.menuCreacionJugador(listaPoke, listaMov);
 
 			List<Pokemon> listPAux = jugador.getEquipoPokemon().getListaPokemon();
+			
+			// Envía los datos del jugador al servidor, el cual se encargará de realizar los cálculos del combate. El cliente deberá actualizar
+			// sus datos en función de las respuestas del servidor, para así estar al día con el mismo.
 			
 			w.println(jugador.getNombre() + ";" + listPAux.get(0).getNombre() + ";" + listPAux.get(1).getNombre() + ";" + listPAux.get(2).getNombre() + ";" +
 					listPAux.get(3).getNombre() + ";" + listPAux.get(4).getNombre() + ";" + listPAux.get(5).getNombre()); 
@@ -71,169 +82,175 @@ public class PokeClient {
 			
 			// Avisa al servidor de que está preparado
 			w.println("Listo");
-			//oosC.writeObject(jugador);
+
 			presConsola.mostrarEspera();
-			
-			brComb.readLine(); //empieza
-				int opcion;
-				int imov;
 
-				Pokemon pok = null;
-				Movimiento mov = null;
-				boolean ren = false;
+			brComb.readLine(); // Empieza. Recibe el mensaje del servidor que le permite comenzar el combate.
+			int opcion;
+			int imov;
 
-				while (this.finalizar == false) {
-					opcion = presConsola.menuAcciones();
-					switch (opcion) {
-					case 1:
-						imov = presConsola.menuMovimientos(jugador.getSeleccionado());
-						mov = jugador.getSeleccionado().getMovimientos().get(imov);
-						break;
-					case 2:
-						pok = presConsola.menuCambiarPokemon(jugador.getSeleccionado(), jugador.getEquipoPokemon());
-						break;
-					case 3:
-						ren = true;
-						break;
-					}
+			Pokemon pok = null;
+			Movimiento mov = null;
+			boolean ren = false;
 
-					protocoloCliente(w, mov, pok, ren);
-
-					///////////////////////
-
-					brComb.readLine(); // Inicio
-
-					brComb.readLine(); //Cambio j1
-					lineaCambio1 = brComb.readLine();
-					if (!lineaCambio1.equals("nulo")) {
-						lineaCambio1Split = lineaCambio1.split(";");
-						if (this.jugador.getNombre().equals(lineaCambio1Split[0])) {
-							for(int i = 0; i < this.jugador.getEquipoPokemon().getListaPokemon().size(); i++) {
-								if (this.jugador.getEquipoPokemon().getListaPokemon().get(i).getNombre().equals(lineaCambio1Split[1])) {
-									this.jugador.setSeleccionado(this.jugador.getEquipoPokemon().getListaPokemon().get(i));
-								}
-							}
-						}
-						presConsola.mostrarCambioPokemon(lineaCambio1Split[0], lineaCambio1Split[1]);
-					}
-					
-					brComb.readLine(); //Cambio j2
-					lineaCambio2 = brComb.readLine();
-					if (!lineaCambio2.equals("nulo")) {
-						lineaCambio2Split = lineaCambio2.split(";");
-						if (this.jugador.getNombre().equals(lineaCambio2Split[0])) {
-							for(int i = 0; i < this.jugador.getEquipoPokemon().getListaPokemon().size(); i++) {
-								if (this.jugador.getEquipoPokemon().getListaPokemon().get(i).getNombre().equals(lineaCambio2Split[1])) {
-									this.jugador.setSeleccionado(this.jugador.getEquipoPokemon().getListaPokemon().get(i));
-								}
-							}
-						}
-						presConsola.mostrarCambioPokemon(lineaCambio2Split[0], lineaCambio2Split[1]);
-					}
-					
-					brComb.readLine(); // Daño j1
-					lineaDanno1 = brComb.readLine();
-					if (!lineaDanno1.equals("nulo")) {
-						lineaDanno1Split = lineaDanno1.split(";");
-						if (this.jugador.getNombre().equals(lineaDanno1Split[0])) {
-							this.jugador.getSeleccionado().setPs(Integer.parseInt(lineaDanno1Split[2]));
-						}
-						
-						presConsola.mostrarDannos(lineaDanno1Split[0], lineaDanno1Split[1],
-								Integer.parseInt(lineaDanno1Split[2]), Float.parseFloat(lineaDanno1Split[3]));
-					}
-
-					brComb.readLine(); // Daño j2
-					lineaDanno2 = brComb.readLine();
-					if (!lineaDanno2.equals("nulo")) {
-						lineaDanno2Split = lineaDanno2.split(";");
-						if (this.jugador.getNombre().equals(lineaDanno2Split[0])) {
-							this.jugador.getSeleccionado().setPs(Integer.parseInt(lineaDanno2Split[2]));
-						}
-						presConsola.mostrarDannos(lineaDanno2Split[0], lineaDanno2Split[1],
-								Integer.parseInt(lineaDanno2Split[2]), Float.parseFloat(lineaDanno2Split[3]));
-					}
-
-					brComb.readLine(); // Debilitado j1
-					lineaDeb1 = brComb.readLine();
-					if (!lineaDeb1.equals("nulo")) {
-						if (this.jugador.getNombre().equals(lineaDeb1)) {
-							this.jugador.getSeleccionado().setDebilitado(true);;
-						}
-						presConsola.mostrarDebilitado(lineaDeb1);
-					}
-
-					brComb.readLine(); // Debilitado j2
-					lineaDeb2 = brComb.readLine();
-					if (!lineaDeb2.equals("nulo")) {
-						if (this.jugador.getNombre().equals(lineaDeb2)) {
-							this.jugador.getSeleccionado().setDebilitado(true);;
-						}
-						presConsola.mostrarDebilitado(lineaDeb2);
-					}
-
-					brComb.readLine(); // Fin
-					
-					finContinua = brComb.readLine();
-					if (finContinua.equals("Fin")) {
-						this.finalizar = true;
-					}
-					else {
-						preguntaDeb = brComb.readLine();
-						if (preguntaDeb.equals("DebilitadoCambio")) {
-							respuestaSiNo = presConsola.preguntaCambioPorDebilitado(this.jugador);
-							if (respuestaSiNo.equals("si")) {
-								int pokeElegido = presConsola.cambioPorDebilitado(this.jugador);
-								
-								this.jugador.setSeleccionado(this.jugador.getEquipoPokemon().getListaPokemon().get(pokeElegido));
-								
-								w.println("si");
-								w.println(pokeElegido);
-							}
-							else {
-								w.println("no");
-							}
-						}
-					}
-					
-					
-					pok = null;
-					mov = null;
-					ren = false;
+			// Mientras que el combate no finalice (no se reciba el mensaje del servidor indicándolo)...
+			while (this.finalizar == false) {
+				opcion = presConsola.menuAcciones(); // Ofrece las acciones disponibles al jugador. Este deberá elegir una de ellas.
+				switch (opcion) { // Nota: si el cliente elige alguna opción que no fuera 1, 2 o 3, habría entonces un fallo de ejecución.
+				case 1:
+					imov = presConsola.menuMovimientos(jugador.getSeleccionado()); // Muestra un menú con los movimientos que puede realizar para atacar.
+					mov = jugador.getSeleccionado().getMovimientos().get(imov); // Obtiene el movimiento seleccionado.
+					break;
+				case 2:
+					pok = presConsola.menuCambiarPokemon(jugador.getSeleccionado(), jugador.getEquipoPokemon()); // Muestra un menú con los pokémon disponibles a los que cambiar.
+					break;
+				case 3:
+					ren = true; // Se rinde.
+					break;
 				}
+
+				protocoloCliente(w, mov, pok, ren); // Envía la estructura de mensajes al servidor.
+
+				///////////////////////
 				
-				brComb.readLine(); //CombFinalizado
+				// El cliente obtiene la estructura de mensajes envíada por el servidor. Interpreta las mismas.
 
-				String resultadoJ1 = brComb.readLine();
-				String resultadoJ2 = brComb.readLine();
+				brComb.readLine(); // Inicio
 
-				String[] resultadoJ1Split = resultadoJ1.split(";");
-				String[] resultadoJ2Split = resultadoJ2.split(";");
-
-				if (resultadoJ1Split[1].equals("Gana")) {
-					presConsola.ganar(resultadoJ1Split[0]);
-				} else {
-					presConsola.perder(resultadoJ1Split[0]);
+				brComb.readLine(); // Cambio j1
+				lineaCambio1 = brComb.readLine();
+				if (!lineaCambio1.equals("nulo")) {
+					lineaCambio1Split = lineaCambio1.split(";");
+					if (this.jugador.getNombre().equals(lineaCambio1Split[0])) {
+						for (int i = 0; i < this.jugador.getEquipoPokemon().getListaPokemon().size(); i++) {
+							if (this.jugador.getEquipoPokemon().getListaPokemon().get(i).getNombre()
+									.equals(lineaCambio1Split[1])) {
+								this.jugador.setSeleccionado(this.jugador.getEquipoPokemon().getListaPokemon().get(i));
+							}
+						}
+					}
+					presConsola.mostrarCambioPokemon(lineaCambio1Split[0], lineaCambio1Split[1]);
 				}
 
-				if (resultadoJ2Split[1].equals("Gana")) {
-					presConsola.ganar(resultadoJ2Split[0]);
-				} else {
-					presConsola.perder(resultadoJ2Split[0]);
+				brComb.readLine(); // Cambio j2
+				lineaCambio2 = brComb.readLine();
+				if (!lineaCambio2.equals("nulo")) {
+					lineaCambio2Split = lineaCambio2.split(";");
+					if (this.jugador.getNombre().equals(lineaCambio2Split[0])) {
+						for (int i = 0; i < this.jugador.getEquipoPokemon().getListaPokemon().size(); i++) {
+							if (this.jugador.getEquipoPokemon().getListaPokemon().get(i).getNombre()
+									.equals(lineaCambio2Split[1])) {
+								this.jugador.setSeleccionado(this.jugador.getEquipoPokemon().getListaPokemon().get(i));
+							}
+						}
+					}
+					presConsola.mostrarCambioPokemon(lineaCambio2Split[0], lineaCambio2Split[1]);
 				}
 
+				brComb.readLine(); // Daño j1
+				lineaDanno1 = brComb.readLine();
+				if (!lineaDanno1.equals("nulo")) {
+					lineaDanno1Split = lineaDanno1.split(";");
+					if (this.jugador.getNombre().equals(lineaDanno1Split[0])) {
+						this.jugador.getSeleccionado().setPs(Integer.parseInt(lineaDanno1Split[2]));
+					}
+
+					presConsola.mostrarDannos(lineaDanno1Split[0], lineaDanno1Split[1],
+							Integer.parseInt(lineaDanno1Split[2]), Float.parseFloat(lineaDanno1Split[3]));
+				}
+
+				brComb.readLine(); // Daño j2
+				lineaDanno2 = brComb.readLine();
+				if (!lineaDanno2.equals("nulo")) {
+					lineaDanno2Split = lineaDanno2.split(";");
+					if (this.jugador.getNombre().equals(lineaDanno2Split[0])) {
+						this.jugador.getSeleccionado().setPs(Integer.parseInt(lineaDanno2Split[2]));
+					}
+					presConsola.mostrarDannos(lineaDanno2Split[0], lineaDanno2Split[1],
+							Integer.parseInt(lineaDanno2Split[2]), Float.parseFloat(lineaDanno2Split[3]));
+				}
+
+				brComb.readLine(); // Debilitado j1
+				lineaDeb1 = brComb.readLine();
+				if (!lineaDeb1.equals("nulo")) {
+					if (this.jugador.getNombre().equals(lineaDeb1)) {
+						this.jugador.getSeleccionado().setDebilitado(true);
+						;
+					}
+					presConsola.mostrarDebilitado(lineaDeb1);
+				}
+
+				brComb.readLine(); // Debilitado j2
+				lineaDeb2 = brComb.readLine();
+				if (!lineaDeb2.equals("nulo")) {
+					if (this.jugador.getNombre().equals(lineaDeb2)) {
+						this.jugador.getSeleccionado().setDebilitado(true);
+						;
+					}
+					presConsola.mostrarDebilitado(lineaDeb2);
+				}
+
+				brComb.readLine(); // Fin
+
+				finContinua = brComb.readLine();
+				if (finContinua.equals("Fin")) {
+					this.finalizar = true;
+				} else {
+					preguntaDeb = brComb.readLine();
+					if (preguntaDeb.equals("DebilitadoCambio")) {
+						respuestaSiNo = presConsola.preguntaCambioPorDebilitado(this.jugador);
+						if (respuestaSiNo.equals("si")) {
+							int pokeElegido = presConsola.cambioPorDebilitado(this.jugador);
+
+							this.jugador.setSeleccionado(
+									this.jugador.getEquipoPokemon().getListaPokemon().get(pokeElegido));
+
+							w.println("si");
+							w.println(pokeElegido);
+						} else {
+							w.println("no");
+						}
+					}
+				}
+
+				pok = null;
+				mov = null;
+				ren = false;
+			}
+
+			// Una vez finalizado el combate, interpreta los mensajes de finalización enviados por el servidor.
 			
-			
-			
+			brComb.readLine(); // CombFinalizado
+
+			String resultadoJ1 = brComb.readLine();
+			String resultadoJ2 = brComb.readLine();
+
+			String[] resultadoJ1Split = resultadoJ1.split(";");
+			String[] resultadoJ2Split = resultadoJ2.split(";");
+
+			if (resultadoJ1Split[1].equals("Gana")) {
+				presConsola.ganar(resultadoJ1Split[0]);
+			} else {
+				presConsola.perder(resultadoJ1Split[0]);
+			}
+
+			if (resultadoJ2Split[1].equals("Gana")) {
+				presConsola.ganar(resultadoJ2Split[0]);
+			} else {
+				presConsola.perder(resultadoJ2Split[0]);
+			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	// Protocolo de envío de mensajes del cliente. Como todo protocolo, se compone de una serie de cabeceras, y sus respectivos cuerpos.
+	// La utilidad de éste es el evío de mensajes con estructura fija, más facil de controlar e interpretar en el servidor. 
 	private static void protocoloCliente(PrintWriter w, Movimiento m, Pokemon p, boolean r) {
-		
+
 		w.println("MensajeInicio");
 
 		w.println("Movimiento");

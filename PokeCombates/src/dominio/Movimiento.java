@@ -14,6 +14,7 @@ public class Movimiento implements Serializable {
 	private int precision;
 	private int prioridad;
 	
+	// Constructor del objeto Movimiento.
 	public Movimiento (String nombre, Tipo tipo, String descripcion, int pp, int potencia, int precision, int prioridad) {
 		this.nombre = nombre;
 		this.tipo = tipo;
@@ -24,38 +25,45 @@ public class Movimiento implements Serializable {
 		this.prioridad = prioridad;
 	}
 	
+	// Obtiene el nombre del movimiento.
 	public String getNombre()
 	{
 		return this.nombre;
 	}
 	
+	// Obtiene el tipo del movimiento.
 	public Tipo getTipo() {
 		return this.tipo;
 	}
 	
+	//Obtiene la descripción del movimiento.
 	public String getDescripcion() {
 		return this.descripcion;
 	}
 	
+	// Obtiene los pp del movimiento.
 	public int getPP() {
 		return this.PP;
 	}
 	
-	// Controla que solo se pueda gastar un punto, y que no pueda quedar la cantidad de movimientos en negativo.
+	// Establece los pp del movimiento. Controla que solo se pueda gastar un punto, y que no pueda quedar la cantidad de movimientos en negativo.
 	public void setPP(int pp) {
 		if (pp == this.PP-1 && pp >= 0) {
 			this.PP = pp;
 		}
 	}
 	
+	// Obtiene la potencia del movimiento.
 	public int getPotencia() {
 		return this.potencia;
 	}
 	
+	// Obtiene la precision del movimiento.
 	public int getPrecision() {
 		return this.precision;
 	}
 	
+	// Obtiene la prioridad del movimiento.
 	public int getPrioridad() {
 		return this.prioridad;
 	}

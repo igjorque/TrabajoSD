@@ -18,6 +18,7 @@ public class Pokemon implements Serializable {
 	
 	private List<Movimiento> movimientos;
 	
+	// Constructor del objeto Pokemon. Inicia el atributo debilitado como FALSE.
 	public Pokemon(String nombre, Tipo lins, int ps, int ataque, int defensa, int velocidad, List<Movimiento> movimientos) {
 		this.nombre = nombre;
 		this.tipo = lins;
@@ -25,50 +26,62 @@ public class Pokemon implements Serializable {
 		this.ataque = ataque;
 		this.defensa = defensa;
 		this.velocidad = velocidad;
-		this.debilitado = false;
 		this.movimientos = movimientos;
+		
+		this.debilitado = false;
 	}
 	
+	// Obtiene el nombre del pokémon.
 	public String getNombre() {
 		return nombre;
 	}
 	
+	// Obtiene el tipo del pokémon.
 	public Tipo getTipo() {
 		return tipo;
 	}
 
+	// Obtiene los ps del pokémon.
 	public int getPs() {
 		return ps;
 	}
 	
+	// Establece los ps del pokémon.
 	public void setPs(int ps) {
 		this.ps = ps;
 	}
 
+	// Obtiene el ataque del pokémon.
 	public int getAtaque() {
 		return ataque;
 	}
 
+	// Obtiene la defensa del pokémon. 
 	public int getDefensa() {
 		return defensa;
 	}
 
+	// Obtiene la velocidad del pokémon.
 	public int getVelocidad() {
 		return velocidad;
 	}
 	
+	// Obtiene un booleano si el pokemon está debilitado o no.
 	public boolean getDebilitado() {
 		return this.debilitado;
 	}
 	
+	// Establece el atributo debilitado.
 	public void setDebilitado(boolean deb) {
 		this.debilitado = true;
 	}
 
+	// Obtiene el listado de movimientos del pokémon.
 	public List<Movimiento> getMovimientos() {
 		return movimientos;
 	}
 
+	// Establece el listado de movimientos del pokémon.
 	public void setMovimientos(List<Movimiento> movimientos) {
 		this.movimientos = movimientos;
 	}
