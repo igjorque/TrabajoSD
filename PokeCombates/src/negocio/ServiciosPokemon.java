@@ -1,10 +1,27 @@
 package negocio;
 
+import java.util.ArrayList;
+
 import dominio.Movimiento;
 import dominio.Pokemon;
 import dominio.TablaTipos;
+import dominio.Tipo;
 
 public class ServiciosPokemon {
+	
+	public Pokemon clonarPokemon(Pokemon p) {
+		ArrayList<Movimiento> listAuxMov = new ArrayList<Movimiento>();
+		listAuxMov.add(clonarMovimiento(p.getMovimientos().get(0)));
+		listAuxMov.add(clonarMovimiento(p.getMovimientos().get(1)));
+		listAuxMov.add(clonarMovimiento(p.getMovimientos().get(2)));
+		listAuxMov.add(clonarMovimiento(p.getMovimientos().get(3)));
+		
+		return new Pokemon(p.getNombre(), p.getTipo(), p.getPs(), p.getAtaque(), p.getDefensa(), p.getVelocidad(), listAuxMov);
+	}
+	
+	public Movimiento clonarMovimiento(Movimiento m) {
+		return new Movimiento(m.getNombre(), m.getTipo(), m.getDescripcion(), m.getPP(), m.getPotencia(), m.getPrecision(), m.getPrioridad());
+	}
 	
 	// "Acción" de atacar. Ambos pokémon están combatiendo. Solo puede obtener un movimiento que no se haya gastado (que tenga PPs).
 	// Devuelve un booleano que indica si el ataque ha tenido exito (TRUE) o no (FALSE).

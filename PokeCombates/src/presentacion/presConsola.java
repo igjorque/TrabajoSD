@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import dominio.*;
+import negocio.NegocioPokemon;
 
 public class presConsola {
 
@@ -85,7 +86,7 @@ public class presConsola {
 					System.out.println(listaMovimiento.get(indice2).toString());
 					break;
 				case 4:
-					System.out.println("Profesor Oak: ¿Quieres ver el listado de Pokémon? (s/n)");
+					System.out.println("Profesor Oak: ¿Quieres ver el listado de Pokémon? (si/no)");
 					eleccion = sc.nextLine();
 					switch(eleccion) {
 						// Muestra el listado, y luego pasa al menú de elección de equipo.
@@ -138,12 +139,12 @@ public class presConsola {
 		
 		do {
 			System.out.println("Movimientos de " + p.getNombre() + ":");
-			System.out.println("	0. " + p.getMovimientos().get(0));
-			System.out.println("	1. " + p.getMovimientos().get(1));
-			System.out.println("	2. " + p.getMovimientos().get(2));
-			System.out.println("	3. " + p.getMovimientos().get(3));
+			System.out.println("	1. " + p.getMovimientos().get(0));
+			System.out.println("	2. " + p.getMovimientos().get(1));
+			System.out.println("	3. " + p.getMovimientos().get(2));
+			System.out.println("	4. " + p.getMovimientos().get(3));
 			
-			opcion = sc.nextInt();
+			opcion = sc.nextInt() - 1;
 			sc.nextLine(); //flush
 		} while ((opcion < 0) || (opcion > 4));
 		
@@ -176,21 +177,24 @@ public class presConsola {
 	
 		do {
 			System.out.println("Equipo:");
-			System.out.println("	0. " + e.getListaPokemon().get(0).getNombre());
-			System.out.println("	1. " + e.getListaPokemon().get(1).getNombre());
-			System.out.println("	2. " + e.getListaPokemon().get(2).getNombre());
-			System.out.println("	3. " + e.getListaPokemon().get(3).getNombre());
-			System.out.println("	4. " + e.getListaPokemon().get(4).getNombre());
-			System.out.println("	5. " + e.getListaPokemon().get(5).getNombre());
+			System.out.println("	1. " + e.getListaPokemon().get(0).getNombre() + ", " + e.getListaPokemon().get(0).getPs() + " PS.");
+			System.out.println("	2. " + e.getListaPokemon().get(1).getNombre() + ", " + e.getListaPokemon().get(1).getPs() + " PS.");
+			System.out.println("	3. " + e.getListaPokemon().get(2).getNombre() + ", " + e.getListaPokemon().get(2).getPs() + " PS.");
+			System.out.println("	4. " + e.getListaPokemon().get(3).getNombre() + ", " + e.getListaPokemon().get(3).getPs() + " PS.");
+			System.out.println("	5. " + e.getListaPokemon().get(4).getNombre() + ", " + e.getListaPokemon().get(4).getPs() + " PS.");
+			System.out.println("	6. " + e.getListaPokemon().get(5).getNombre() + ", " + e.getListaPokemon().get(5).getPs() + " PS.");
 			
-			opcion = sc.nextInt();
+			opcion = sc.nextInt() - 1;
 			sc.nextLine(); //flush
 			
 			if (opcion == numActual) {
 				System.out.println("¡Ya es el pokémon seleccionado!");
 			}
+			if (e.getListaPokemon().get(opcion).getDebilitado() == true) {
+				System.out.println("Este pokémon está debilitado.");
+			}
 			
-		} while ((opcion < 0) || (opcion > 5) || (opcion == numActual));
+		} while ((opcion < 0) || (opcion > 5) || (opcion == numActual) || (e.getListaPokemon().get(opcion).getDebilitado() == true));
 		
 		return e.getListaPokemon().get(opcion);
 	}
@@ -201,6 +205,10 @@ public class presConsola {
 	
 	public static void mostrarDebilitado(String j) {
 		System.out.println("¡El pokémon de " + j + " se ha debilitado!");
+	}
+	
+	public static void mostrarCambioPokemon(String j, String poke) {
+		System.out.println("El jugador " + j + " ha cambiado al pokémon por " + poke);
 	}
 	
 	public static String preguntaCambioPorDebilitado(Jugador j) {
@@ -233,14 +241,14 @@ public class presConsola {
 		
 		System.out.println("¿Qué pokémon quieres sacar al combate?");
 		List<Pokemon> listP = j.getEquipoPokemon().getListaPokemon();
-		for (int i = 0; i < listP.size(); i++) {
-			if (listP.get(i).getDebilitado() == false) {
-				System.out.println(i + " " + listP.get(i).getNombre());
+		for (int i = 1; i < listP.size()+1; i++) {
+			if (listP.get(i-1).getDebilitado() == false) {
+				System.out.println(i + " " + listP.get(i-1).getNombre());
 			}
 		}
 		
 		do {
-		opcion = sc.nextInt();
+		opcion = sc.nextInt() - 1;
 		sc.nextLine(); //flush
 		
 		} while (listP.get(opcion).getDebilitado());
@@ -258,15 +266,15 @@ public class presConsola {
 	
 	private static void mostrarListadoPoke(List<Pokemon> listado) {
 		System.out.println("Profesor Oak: Voy a mostrarte los que tengo disponibles:");
-		for (int i = 0; i < listado.size(); i++) {
-			System.out.println(i + " " + listado.get(i).getNombre());
+		for (int i = 1; i < listado.size()+1; i++) {
+			System.out.println(i + " " + listado.get(i-1).getNombre());
 		}
 	}
 	
 	private static void mostrarListadoMovi(List<Movimiento> listado) {
 		System.out.println("Profesor Oak: Voy a mostrarte los que conocemos:");
-		for (int i = 0; i<listado.size(); i++) {
-			System.out.println(i + " " + listado.get(i).getNombre());
+		for (int i = 1; i<listado.size()+1; i++) {
+			System.out.println(i + " " + listado.get(i-1).getNombre());
 		}
 	}
 	
@@ -277,9 +285,13 @@ public class presConsola {
 		int opcion;
 		for (int i = 1; i < 7; i++) {
 			System.out.println("Pokemon " + i + ": ");
-			opcion = sc.nextInt();
+			opcion = sc.nextInt() - 1;
 			sc.nextLine(); //flush
-			equipoJugador.addPokemon(listado.get(opcion));
+			
+			NegocioPokemon np = new NegocioPokemon();
+			
+			equipoJugador.addPokemon(np.getServiciosPokemon().clonarPokemon(listado.get(opcion)));
+			System.out.println(opcion);
 		}
 	}
 	

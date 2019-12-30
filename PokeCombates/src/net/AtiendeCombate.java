@@ -49,31 +49,33 @@ public class AtiendeCombate implements Runnable{
 			String lineaDatosJ1 = br1.readLine();
 			String [] lineaDatosJ1Split = lineaDatosJ1.split(";");
 			Equipo equipoJ1aux = new Equipo();
-			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[1]));
-			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[2]));
-			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[3]));
-			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[4]));
-			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[5]));
-			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[6]));
+			equipoJ1aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[1])));
+			equipoJ1aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[2])));
+			equipoJ1aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[3])));
+			equipoJ1aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[4])));
+			equipoJ1aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[5])));
+			equipoJ1aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[6])));
 			this.j1 = new Jugador(lineaDatosJ1Split[0], equipoJ1aux);
 			br1.readLine(); //listo j1
 			
 			String lineaDatosJ2 = br2.readLine();
 			String [] lineaDatosJ2Split = lineaDatosJ2.split(";");
 			Equipo equipoJ2aux = new Equipo();
-			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[1]));
-			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[2]));
-			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[3]));
-			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[4]));
-			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[5]));
-			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[6]));
+			equipoJ2aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[1])));
+			equipoJ2aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[2])));
+			equipoJ2aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[3])));
+			equipoJ2aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[4])));
+			equipoJ2aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[5])));
+			equipoJ2aux.addPokemon(np.getServiciosPokemon().clonarPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[6])));
 			this.j2 = new Jugador(lineaDatosJ2Split[0], equipoJ2aux);
 			br2.readLine(); //listo j2
 			
 			w1.println("Empieza");
 			w2.println("Empieza");
 			
+			System.out.println("dnisoadn");
 			boolean comprobacionFinalizado = comprobarFinalizado(this.np, this.j1, this.j2);
+			System.out.println("dnisoadn");
 			while (comprobacionFinalizado == false) 
 			{
 				///////////////////////////Lee protocolo cliente
@@ -218,8 +220,8 @@ public class AtiendeCombate implements Runnable{
 				boolean deb1 = j1.getSeleccionado().getDebilitado();
 				boolean deb2 = j2.getSeleccionado().getDebilitado();
 				
-				protocoloServidor(w1, j1, j2, ataqueExito1, ataqueExito2, deb1, deb2);
-				protocoloServidor(w2, j1, j2, ataqueExito1, ataqueExito2, deb1, deb2);
+				protocoloServidor(w1, j1, j2, p1, p2, ataqueExito1, ataqueExito2, deb1, deb2);
+				protocoloServidor(w2, j1, j2, p1, p2, ataqueExito1, ataqueExito2, deb1, deb2);
 				
 				comprobacionFinalizado = comprobarFinalizado(this.np, this.j1, this.j2);
 				System.out.println("comprueba");
@@ -263,6 +265,15 @@ public class AtiendeCombate implements Runnable{
 						w2.println("NoDebilitadoCambio");
 					}
 				}
+				
+				p1 = null;
+				p2 = null;
+				m1 = null;
+				m2 = null;
+				ataqueExito1 = 0;
+				ataqueExito2 = 0;
+				deb1 = false;
+				deb2 = false;
 				
 			}
 			
@@ -308,10 +319,26 @@ public class AtiendeCombate implements Runnable{
 		
 	}
 	
-	private static void protocoloServidor(PrintWriter w, Jugador j1, Jugador j2, float danno2, float danno1, boolean deb1, boolean deb2) {
+	private static void protocoloServidor(PrintWriter w, Jugador j1, Jugador j2, Pokemon p1, Pokemon p2, float danno2, float danno1, boolean deb1, boolean deb2) {
 
 		w.println("MensajeInicio");
 
+		w.println("CambioJ1");
+		if(p1 != null) {
+			w.println(j1.getNombre() + ";" + p1.getNombre());
+		}
+		else {
+			w.println("nulo");
+		}
+		
+		w.println("CambioJ2");
+		if(p2 != null) {
+			w.println(j2.getNombre() + ";" + p2.getNombre());
+		}
+		else {
+			w.println("nulo");
+		}
+		
 		w.println("DannoJ1");
 		if (danno1 != 0) {
 			w.println(j1.getNombre() + ";" + j1.getSeleccionado().getNombre() + ";" + j1.getSeleccionado().getPs() + ";"

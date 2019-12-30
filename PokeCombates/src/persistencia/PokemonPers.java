@@ -61,20 +61,15 @@ public class PokemonPers {
 			while ((linea = br.readLine()) != null) {
 				lins = linea.split(";");
 
-				while ((linea = br.readLine()) != null) {
-					lins = linea.split(";");
-
+				if (lins[0].equals(s)) {
 					listaMov = new ArrayList<Movimiento>();
 					listaMov.add(MovimientoPers.encontrarMovimiento(lins[6]));
 					listaMov.add(MovimientoPers.encontrarMovimiento(lins[7]));
 					listaMov.add(MovimientoPers.encontrarMovimiento(lins[8]));
 					listaMov.add(MovimientoPers.encontrarMovimiento(lins[9]));
-
-					if (lins[0].equals(s)) {
-						poke = new Pokemon(lins[0], MetodosAuxiliares.stringToTipo(lins[1]), Integer.parseInt(lins[2]),
-								Integer.parseInt(lins[3]), Integer.parseInt(lins[4]), Integer.parseInt(lins[5]),
-								listaMov);
-					}
+					
+					poke = new Pokemon(lins[0], MetodosAuxiliares.stringToTipo(lins[1]), Integer.parseInt(lins[2]),
+							Integer.parseInt(lins[3]), Integer.parseInt(lins[4]), Integer.parseInt(lins[5]), listaMov);
 				}
 			}
 
