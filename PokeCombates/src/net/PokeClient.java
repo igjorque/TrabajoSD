@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Writer;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import dominio.Jugador;
@@ -36,7 +34,22 @@ public class PokeClient {
 		this.puertoFicheros = puertoFichero;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void ejecutar() {
+		String lineaCambio1, lineaCambio2;
+		String [] lineaCambio1Split; 
+		String [] lineaCambio2Split;
+		String lineaDanno1, lineaDanno2;
+		String[] lineaDanno1Split;
+		String[] lineaDanno2Split;
+		String lineaDeb1, lineaDeb2;
+		String finContinua;
+		String preguntaDeb;
+		String respuestaSiNo;
+		
+		
+		
+		
 		try(Socket sComb = new Socket(this.host, this.puerto);
 				BufferedReader brComb = new BufferedReader (new InputStreamReader (sComb.getInputStream()));
 				PrintWriter w = new PrintWriter(sComb.getOutputStream(), true);
@@ -44,16 +57,14 @@ public class PokeClient {
 			Socket sFich = new Socket(this.host, this.puertoFicheros);
 				ObjectInputStream ois = new ObjectInputStream(sFich.getInputStream());) 
 		{
-			w.println("aednwsdo");	//Envía esta línea porque recibe caracteres extraños y no sabemos el motivo.
-			
+			w.println(".");	//Envía esta línea porque recibe caracteres extraños y no sabemos el motivo.
 			
 			ArrayList<Pokemon> listaPoke = (ArrayList<Pokemon>) ois.readObject();
 			ArrayList<Movimiento> listaMov = (ArrayList<Movimiento>) ois.readObject();
 			jugador = presConsola.menuCreacionJugador(listaPoke, listaMov);
 
 			List<Pokemon> listPAux = jugador.getEquipoPokemon().getListaPokemon();
-			System.out.println(jugador.getNombre() + ";" + listPAux.get(0).getNombre() + ";" + listPAux.get(1).getNombre() + ";" + listPAux.get(2).getNombre() + ";" +
-					listPAux.get(3).getNombre() + ";" + listPAux.get(4).getNombre() + ";" + listPAux.get(5).getNombre());
+			
 			w.println(jugador.getNombre() + ";" + listPAux.get(0).getNombre() + ";" + listPAux.get(1).getNombre() + ";" + listPAux.get(2).getNombre() + ";" +
 					listPAux.get(3).getNombre() + ";" + listPAux.get(4).getNombre() + ";" + listPAux.get(5).getNombre()); 
 					
@@ -93,8 +104,7 @@ public class PokeClient {
 					brComb.readLine(); // Inicio
 
 					brComb.readLine(); //Cambio j1
-					String lineaCambio1 = brComb.readLine();
-					String [] lineaCambio1Split;
+					lineaCambio1 = brComb.readLine();
 					if (!lineaCambio1.equals("nulo")) {
 						lineaCambio1Split = lineaCambio1.split(";");
 						if (this.jugador.getNombre().equals(lineaCambio1Split[0])) {
@@ -108,8 +118,7 @@ public class PokeClient {
 					}
 					
 					brComb.readLine(); //Cambio j2
-					String lineaCambio2 = brComb.readLine();
-					String [] lineaCambio2Split;
+					lineaCambio2 = brComb.readLine();
 					if (!lineaCambio2.equals("nulo")) {
 						lineaCambio2Split = lineaCambio2.split(";");
 						if (this.jugador.getNombre().equals(lineaCambio2Split[0])) {
@@ -123,8 +132,7 @@ public class PokeClient {
 					}
 					
 					brComb.readLine(); // Daño j1
-					String lineaDanno1 = brComb.readLine();
-					String[] lineaDanno1Split;
+					lineaDanno1 = brComb.readLine();
 					if (!lineaDanno1.equals("nulo")) {
 						lineaDanno1Split = lineaDanno1.split(";");
 						if (this.jugador.getNombre().equals(lineaDanno1Split[0])) {
@@ -136,8 +144,7 @@ public class PokeClient {
 					}
 
 					brComb.readLine(); // Daño j2
-					String lineaDanno2 = brComb.readLine();
-					String[] lineaDanno2Split;
+					lineaDanno2 = brComb.readLine();
 					if (!lineaDanno2.equals("nulo")) {
 						lineaDanno2Split = lineaDanno2.split(";");
 						if (this.jugador.getNombre().equals(lineaDanno2Split[0])) {
@@ -148,7 +155,7 @@ public class PokeClient {
 					}
 
 					brComb.readLine(); // Debilitado j1
-					String lineaDeb1 = brComb.readLine();
+					lineaDeb1 = brComb.readLine();
 					if (!lineaDeb1.equals("nulo")) {
 						if (this.jugador.getNombre().equals(lineaDeb1)) {
 							this.jugador.getSeleccionado().setDebilitado(true);;
@@ -157,7 +164,7 @@ public class PokeClient {
 					}
 
 					brComb.readLine(); // Debilitado j2
-					String lineaDeb2 = brComb.readLine();
+					lineaDeb2 = brComb.readLine();
 					if (!lineaDeb2.equals("nulo")) {
 						if (this.jugador.getNombre().equals(lineaDeb2)) {
 							this.jugador.getSeleccionado().setDebilitado(true);;
@@ -167,14 +174,14 @@ public class PokeClient {
 
 					brComb.readLine(); // Fin
 					
-					String finContinua = brComb.readLine();
+					finContinua = brComb.readLine();
 					if (finContinua.equals("Fin")) {
 						this.finalizar = true;
 					}
 					else {
-						String preguntaDeb = brComb.readLine();
+						preguntaDeb = brComb.readLine();
 						if (preguntaDeb.equals("DebilitadoCambio")) {
-							String respuestaSiNo = presConsola.preguntaCambioPorDebilitado(this.jugador);
+							respuestaSiNo = presConsola.preguntaCambioPorDebilitado(this.jugador);
 							if (respuestaSiNo.equals("si")) {
 								int pokeElegido = presConsola.cambioPorDebilitado(this.jugador);
 								
@@ -188,6 +195,11 @@ public class PokeClient {
 							}
 						}
 					}
+					
+					
+					pok = null;
+					mov = null;
+					ren = false;
 				}
 				
 				brComb.readLine(); //CombFinalizado

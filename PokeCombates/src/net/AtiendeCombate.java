@@ -3,9 +3,7 @@ package net;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.Socket;
 import java.util.List;
 
@@ -34,6 +32,25 @@ public class AtiendeCombate implements Runnable{
 	
 	@Override
 	public void run() {
+		
+		String lineaMovimiento1, lineaMovimiento2;
+		String lineaCambiar1, lineaCambiar2;
+		String lineaRendir1, lineaRendir2;
+		Pokemon p1, p2;
+		Movimiento m1, m2;
+		boolean deb1, deb2;
+		
+		int prioridadM1, prioridadM2;
+		float ataqueExito1, ataqueExito2;
+		int jugadorAzar;
+		
+		List<Movimiento> listMov;
+		List<Pokemon> listPoke;
+		
+		String respuesta;
+		
+		Pokemon po1, po2;
+		int lineaPokemon1, lineaPokemon2;
 		
 		this.tabla.rellenarTabla();
 		
@@ -73,19 +90,18 @@ public class AtiendeCombate implements Runnable{
 			w1.println("Empieza");
 			w2.println("Empieza");
 			
-			System.out.println("dnisoadn");
 			boolean comprobacionFinalizado = comprobarFinalizado(this.np, this.j1, this.j2);
-			System.out.println("dnisoadn");
+			
 			while (comprobacionFinalizado == false) 
 			{
 				///////////////////////////Lee protocolo cliente
 				//DATOS J1
 				br1.readLine(); //Lee inicio j1
 				br1.readLine(); //Lee movimiento j1 
-				String lineaMovimiento1 = br1.readLine();
-				Movimiento m1 = null;
+				lineaMovimiento1 = br1.readLine();
+				m1 = null;
 				if (!lineaMovimiento1.equals("nulo")) {
-					List<Movimiento> listMov = this.j1.getSeleccionado().getMovimientos();
+					listMov = this.j1.getSeleccionado().getMovimientos();
 					for (int i = 0; i < listMov.size(); i++) {
 						if (listMov.get(i).getNombre().equals(lineaMovimiento1)) {
 							m1 = listMov.get(i);
@@ -94,10 +110,10 @@ public class AtiendeCombate implements Runnable{
 				}
 				
 				br1.readLine(); //Lee cambiar j1
-				String lineaCambiar1 = br1.readLine();
-				Pokemon p1 = null;
+				lineaCambiar1 = br1.readLine();
+				p1 = null;
 				if (!lineaCambiar1.equals("nulo")) {
-					List<Pokemon> listPoke = this.j1.getEquipoPokemon().getListaPokemon();
+					listPoke = this.j1.getEquipoPokemon().getListaPokemon();
 					for (int i = 0; i < listPoke.size(); i++) {
 						if (listPoke.get(i).getNombre().equals(lineaCambiar1)) {
 							p1 = listPoke.get(i);
@@ -108,7 +124,7 @@ public class AtiendeCombate implements Runnable{
 				}
 				
 				br1.readLine(); //Lee rendirse j1
-				String lineaRendir1 = br1.readLine();
+				lineaRendir1 = br1.readLine();
 				if (lineaRendir1.equals("si")) {
 					np.getServiciosEquipo().rendirse(j1.getEquipoPokemon());
 				}
@@ -117,10 +133,10 @@ public class AtiendeCombate implements Runnable{
 				br2.readLine(); //Lee inicio j2
 				
 				br2.readLine(); //Lee movimiento j2 
-				String lineaMovimiento2 = br2.readLine();
-				Movimiento m2 = null;
+				lineaMovimiento2 = br2.readLine();
+				m2 = null;
 				if (!lineaMovimiento2.equals("nulo")) {
-					List<Movimiento> listMov = this.j2.getSeleccionado().getMovimientos();
+					listMov = this.j2.getSeleccionado().getMovimientos();
 					for (int i = 0; i < listMov.size(); i++) {
 						if (listMov.get(i).getNombre().equals(lineaMovimiento2)) {
 							m2 = listMov.get(i);
@@ -129,10 +145,10 @@ public class AtiendeCombate implements Runnable{
 				}
 				
 				br2.readLine(); //Lee cambiar j2
-				String lineaCambiar2 = br2.readLine();
-				Pokemon p2 = null;
+				lineaCambiar2 = br2.readLine();
+				p2 = null;
 				if (!lineaCambiar2.equals("nulo")) {
-					List<Pokemon> listPoke = this.j2.getEquipoPokemon().getListaPokemon();
+					listPoke = this.j2.getEquipoPokemon().getListaPokemon();
 					for (int i = 0; i < listPoke.size(); i++) {
 						if (listPoke.get(i).getNombre().equals(lineaCambiar2)) {
 							p2 = listPoke.get(i);
@@ -143,7 +159,7 @@ public class AtiendeCombate implements Runnable{
 				}
 				
 				br2.readLine(); //Lee rendirse j2
-				String lineaRendir2 = br2.readLine();
+				lineaRendir2 = br2.readLine();
 				if (lineaRendir2.equals("si")) {
 					np.getServiciosEquipo().rendirse(j2.getEquipoPokemon());
 				}
@@ -161,10 +177,10 @@ public class AtiendeCombate implements Runnable{
 					np.getServiciosEquipo().cambiarPokemon(j2, p2);
 				}
 				
-				int prioridadM1 = -1;
-				int prioridadM2 = -1;
-				float ataqueExito1 = 0;
-				float ataqueExito2 = 0;
+				prioridadM1 = -1;
+				prioridadM2 = -1;
+				ataqueExito1 = 0;
+				ataqueExito2 = 0;
 				
 				if ((p1 == null) && (m1 != null)) {
 					prioridadM1 = m1.getPrioridad();
@@ -175,13 +191,13 @@ public class AtiendeCombate implements Runnable{
 				
 				if (prioridadM1 > prioridadM2) {
 					ataqueExito1 = np.getServiciosPokemon().atacar(j1.getSeleccionado(), j2.getSeleccionado(), tabla, m1);
-					if ((m2 != null) && (j2.getSeleccionado().getDebilitado() == false)) {
+					if ((prioridadM2 != -1) && (m2 != null) && (j2.getSeleccionado().getDebilitado() == false)) {
 						ataqueExito2 = np.getServiciosPokemon().atacar(j2.getSeleccionado(), j1.getSeleccionado(), tabla, m2);
 					}
 				}
 				if (prioridadM1 < prioridadM2) {
 					ataqueExito2 = np.getServiciosPokemon().atacar(j2.getSeleccionado(), j1.getSeleccionado(), tabla, m2);
-					if ((m1 != null) && (j1.getSeleccionado().getDebilitado() == false)) {
+					if ((prioridadM1 != -1)  && (m1 != null) && (j1.getSeleccionado().getDebilitado() == false)) {
 						ataqueExito1 = np.getServiciosPokemon().atacar(j1.getSeleccionado(), j2.getSeleccionado(), tabla, m1);
 					}
 				}
@@ -201,7 +217,7 @@ public class AtiendeCombate implements Runnable{
 					}
 					
 					if (j1.getSeleccionado().getVelocidad() == j2.getSeleccionado().getVelocidad()) {
-						int jugadorAzar = (int) ((Math.random() * 2) + 1);
+						jugadorAzar = (int) ((Math.random() * 2) + 1);
 						if (jugadorAzar == 1) {
 							ataqueExito1 = np.getServiciosPokemon().atacar(j1.getSeleccionado(), j2.getSeleccionado(), tabla, m1);
 							if (j2.getSeleccionado().getDebilitado() == false) {
@@ -217,14 +233,14 @@ public class AtiendeCombate implements Runnable{
 					}
 				}
 				
-				boolean deb1 = j1.getSeleccionado().getDebilitado();
-				boolean deb2 = j2.getSeleccionado().getDebilitado();
+				deb1 = j1.getSeleccionado().getDebilitado();
+				deb2 = j2.getSeleccionado().getDebilitado();
 				
 				protocoloServidor(w1, j1, j2, p1, p2, ataqueExito1, ataqueExito2, deb1, deb2);
 				protocoloServidor(w2, j1, j2, p1, p2, ataqueExito1, ataqueExito2, deb1, deb2);
 				
 				comprobacionFinalizado = comprobarFinalizado(this.np, this.j1, this.j2);
-				System.out.println("comprueba");
+				
 				if (comprobacionFinalizado == true) {
 					w1.println("Fin");
 					w2.println("Fin");
@@ -235,10 +251,10 @@ public class AtiendeCombate implements Runnable{
 					
 					if (deb1 == true) {
 						w1.println("DebilitadoCambio");
-						String respuesta = br1.readLine();
+						respuesta = br1.readLine();
 						if (respuesta.equals("si")) {
-							int lineaPokemon1 = Integer.parseInt(br1.readLine());
-							Pokemon po1 = this.j1.getEquipoPokemon().getListaPokemon().get(lineaPokemon1);
+							lineaPokemon1 = Integer.parseInt(br1.readLine());
+							po1 = this.j1.getEquipoPokemon().getListaPokemon().get(lineaPokemon1);
 							np.getServiciosEquipo().cambiarPokemon(j1, po1);
 						}
 						else {
@@ -251,10 +267,10 @@ public class AtiendeCombate implements Runnable{
 					
 					if (deb2 == true) {
 						w2.println("DebilitadoCambio");
-						String respuesta = br2.readLine();
+						respuesta = br2.readLine();
 						if (respuesta.equals("si")) {
-							int lineaPokemon2 = Integer.parseInt(br2.readLine());
-							Pokemon po2 = this.j2.getEquipoPokemon().getListaPokemon().get(lineaPokemon2);
+							lineaPokemon2 = Integer.parseInt(br2.readLine());
+							po2 = this.j2.getEquipoPokemon().getListaPokemon().get(lineaPokemon2);
 							np.getServiciosEquipo().cambiarPokemon(j2, po2);
 						}
 						else {
@@ -270,10 +286,12 @@ public class AtiendeCombate implements Runnable{
 				p2 = null;
 				m1 = null;
 				m2 = null;
-				ataqueExito1 = 0;
-				ataqueExito2 = 0;
 				deb1 = false;
 				deb2 = false;
+				ataqueExito1 = 0;
+				ataqueExito2 = 0;
+				prioridadM1 = -1;
+				prioridadM2 = -1;
 				
 			}
 			

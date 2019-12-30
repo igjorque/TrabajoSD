@@ -291,7 +291,6 @@ public class presConsola {
 			NegocioPokemon np = new NegocioPokemon();
 			
 			equipoJugador.addPokemon(np.getServiciosPokemon().clonarPokemon(listado.get(opcion)));
-			System.out.println(opcion);
 		}
 	}
 	

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import dominio.Movimiento;
 import dominio.Pokemon;
 import dominio.TablaTipos;
-import dominio.Tipo;
 
 public class ServiciosPokemon {
 	
