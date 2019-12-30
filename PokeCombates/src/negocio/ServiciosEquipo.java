@@ -12,9 +12,10 @@ public class ServiciosEquipo {
 		int i = 0;
 		
 		while (b == true && (i<e.getListaPokemon().size())) {
-			if (e.getListaPokemon().get(i).getDebilitado() == true) {
+			if (e.getListaPokemon().get(i).getDebilitado() == false) {
 				b = false;
 			}
+			i++;
 		}
 		
 		return b;

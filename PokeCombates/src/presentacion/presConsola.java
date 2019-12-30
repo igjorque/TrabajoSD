@@ -196,7 +196,7 @@ public class presConsola {
 	}
 	
 	public static void mostrarDannos(String j, String poke, int vida, float d) {
-		System.out.println("El pokémon " + poke + " de " + j + " ha recibido " + d + " de daño, le queda " + vida + " de vida.");
+		System.out.println("El pokémon " + poke + " de " + j + " ha recibido " + (int) d + " de daño, le queda " + vida + " de vida.");
 	}
 	
 	public static void mostrarDebilitado(String j) {

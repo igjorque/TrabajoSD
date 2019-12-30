@@ -28,8 +28,8 @@ public class ServiciosPokemon {
 			
 			variacion = (int) (Math.random() * (100-85)) + 85;
 			
-			ataque = 0.01f * bonificacion * efectividad * variacion * (((0.2f * 10 + 1) * 
-					pokemonPropio.getAtaque() * m.getPotencia() / 25 * pokemonRival.getDefensa()) + 2);
+			ataque = 0.01f * bonificacion * efectividad * variacion * ((((0.2f * 10 + 1) * 
+					pokemonPropio.getAtaque() * m.getPotencia()) / (25 * pokemonRival.getDefensa())) + 2);
 			
 			recibirAtaque(pokemonRival, ataque);
 			
@@ -42,7 +42,7 @@ public class ServiciosPokemon {
 	}
 	
 	private void recibirAtaque(Pokemon poke, float danno) {
-		poke.setPs((int) (poke.getPs() - danno));
+		poke.setPs(poke.getPs() - (int) danno);
 		if (poke.getPs() <= 0) {
 			poke.setDebilitado(true);
 		}

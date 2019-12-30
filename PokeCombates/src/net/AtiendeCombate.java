@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.Socket;
 import java.util.List;
@@ -36,14 +37,17 @@ public class AtiendeCombate implements Runnable{
 		
 		this.tabla.rellenarTabla();
 		
-		try(BufferedReader br1 = new BufferedReader (new InputStreamReader (s1.getInputStream(), "UTF-8"));
-				Writer w1 = new OutputStreamWriter(s1.getOutputStream(), "UTF-8");
-			BufferedReader br2 = new BufferedReader (new InputStreamReader (s2.getInputStream(), "UTF-8"));
-				Writer w2 = new OutputStreamWriter(s2.getOutputStream(), "UTF-8");)
+		try(BufferedReader br1 = new BufferedReader (new InputStreamReader (s1.getInputStream()));
+				PrintWriter w1 = new PrintWriter(s1.getOutputStream(), true);
+			BufferedReader br2 = new BufferedReader (new InputStreamReader (s2.getInputStream()));
+				PrintWriter w2 = new PrintWriter(s2.getOutputStream(), true);)
 		{
-			br1.readLine(); //listo j1
+			
+			br1.readLine(); //Recibe esta línea porque envía caracteres extraños y no sabemos el motivo.
+			br2.readLine(); //Recibe esta línea porque envía caracteres extraños y no sabemos el motivo.
+			
 			String lineaDatosJ1 = br1.readLine();
-			String [] lineaDatosJ1Split = lineaDatosJ1.split("|");
+			String [] lineaDatosJ1Split = lineaDatosJ1.split(";");
 			Equipo equipoJ1aux = new Equipo();
 			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[1]));
 			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[2]));
@@ -52,10 +56,10 @@ public class AtiendeCombate implements Runnable{
 			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[5]));
 			equipoJ1aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ1Split[6]));
 			this.j1 = new Jugador(lineaDatosJ1Split[0], equipoJ1aux);
+			br1.readLine(); //listo j1
 			
-			br2.readLine(); //listo j2
 			String lineaDatosJ2 = br2.readLine();
-			String [] lineaDatosJ2Split = lineaDatosJ2.split("|");
+			String [] lineaDatosJ2Split = lineaDatosJ2.split(";");
 			Equipo equipoJ2aux = new Equipo();
 			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[1]));
 			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[2]));
@@ -64,16 +68,17 @@ public class AtiendeCombate implements Runnable{
 			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[5]));
 			equipoJ2aux.addPokemon(PokemonPers.encontrarPokemon(lineaDatosJ2Split[6]));
 			this.j2 = new Jugador(lineaDatosJ2Split[0], equipoJ2aux);
+			br2.readLine(); //listo j2
 			
-			w1.write("Empieza\r\n");
-			w2.write("Empieza\r\n");
+			w1.println("Empieza");
+			w2.println("Empieza");
 			
-			while (comprobarFinalizado(this.np, this.j1, this.j2) == false) 
+			boolean comprobacionFinalizado = comprobarFinalizado(this.np, this.j1, this.j2);
+			while (comprobacionFinalizado == false) 
 			{
 				///////////////////////////Lee protocolo cliente
 				//DATOS J1
 				br1.readLine(); //Lee inicio j1
-				
 				br1.readLine(); //Lee movimiento j1 
 				String lineaMovimiento1 = br1.readLine();
 				Movimiento m1 = null;
@@ -94,8 +99,16 @@ public class AtiendeCombate implements Runnable{
 					for (int i = 0; i < listPoke.size(); i++) {
 						if (listPoke.get(i).getNombre().equals(lineaCambiar1)) {
 							p1 = listPoke.get(i);
+							np.getServiciosEquipo().cambiarPokemon(j1, p1);
 						}
 					}
+					
+				}
+				
+				br1.readLine(); //Lee rendirse j1
+				String lineaRendir1 = br1.readLine();
+				if (lineaRendir1.equals("si")) {
+					np.getServiciosEquipo().rendirse(j1.getEquipoPokemon());
 				}
 				
 				//DATOS J2
@@ -121,32 +134,19 @@ public class AtiendeCombate implements Runnable{
 					for (int i = 0; i < listPoke.size(); i++) {
 						if (listPoke.get(i).getNombre().equals(lineaCambiar2)) {
 							p2 = listPoke.get(i);
+							np.getServiciosEquipo().cambiarPokemon(j2, p2);
 						}
 					}
+					
 				}
 				
-				//
-				
-				br1.readLine(); //Lee rendirse j1
 				br2.readLine(); //Lee rendirse j2
-				String lineaRendir1 = br1.readLine();
 				String lineaRendir2 = br2.readLine();
-				if (lineaRendir1.equals("si") && lineaRendir2.equals("si")) {
-					np.getServiciosEquipo().rendirse(j1.getEquipoPokemon());
+				if (lineaRendir2.equals("si")) {
 					np.getServiciosEquipo().rendirse(j2.getEquipoPokemon());
-					break;
-				}
-				if (lineaRendir1.equals("si") && lineaRendir2.equals("no")) {
-					np.getServiciosEquipo().rendirse(j1.getEquipoPokemon());
-					break;
-				}
-				if (lineaRendir1.equals("no") && lineaRendir2.equals("si")) {
-					np.getServiciosEquipo().rendirse(j2.getEquipoPokemon());
-					break;
 				}
 				
 				//
-				
 				br1.readLine(); //Lee fin j1
 				br2.readLine(); //Lee fin j2
 				
@@ -221,29 +221,46 @@ public class AtiendeCombate implements Runnable{
 				protocoloServidor(w1, j1, j2, ataqueExito1, ataqueExito2, deb1, deb2);
 				protocoloServidor(w2, j1, j2, ataqueExito1, ataqueExito2, deb1, deb2);
 				
-				if (deb1 == true) {
-					w1.write("DebilitadoCambio");
-					String respuesta = br1.readLine();
-					if (respuesta.equals("si")) {
-						int lineaPokemon1 = Integer.parseInt(br1.readLine());
-						Pokemon po1 = this.j1.getEquipoPokemon().getListaPokemon().get(lineaPokemon1);
-						np.getServiciosEquipo().cambiarPokemon(j1, po1);
-					}
-					else {
-						np.getServiciosEquipo().rendirse(j1.getEquipoPokemon());
-					}
+				comprobacionFinalizado = comprobarFinalizado(this.np, this.j1, this.j2);
+				System.out.println("comprueba");
+				if (comprobacionFinalizado == true) {
+					w1.println("Fin");
+					w2.println("Fin");
 				}
-				
-				if (deb2 == true) {
-					w2.write("DebilitadoCambio");
-					String respuesta = br2.readLine();
-					if (respuesta.equals("si")) {
-						int lineaPokemon2 = Integer.parseInt(br2.readLine());
-						Pokemon po2 = this.j2.getEquipoPokemon().getListaPokemon().get(lineaPokemon2);
-						np.getServiciosEquipo().cambiarPokemon(j2, po2);
+				else {
+					w1.println("Continua");
+					w2.println("Continua");
+					
+					if (deb1 == true) {
+						w1.println("DebilitadoCambio");
+						String respuesta = br1.readLine();
+						if (respuesta.equals("si")) {
+							int lineaPokemon1 = Integer.parseInt(br1.readLine());
+							Pokemon po1 = this.j1.getEquipoPokemon().getListaPokemon().get(lineaPokemon1);
+							np.getServiciosEquipo().cambiarPokemon(j1, po1);
+						}
+						else {
+							np.getServiciosEquipo().rendirse(j1.getEquipoPokemon());
+						}
 					}
 					else {
-						np.getServiciosEquipo().rendirse(j2.getEquipoPokemon());
+						w1.println("NoDebilitadoCambio");
+					}
+					
+					if (deb2 == true) {
+						w2.println("DebilitadoCambio");
+						String respuesta = br2.readLine();
+						if (respuesta.equals("si")) {
+							int lineaPokemon2 = Integer.parseInt(br2.readLine());
+							Pokemon po2 = this.j2.getEquipoPokemon().getListaPokemon().get(lineaPokemon2);
+							np.getServiciosEquipo().cambiarPokemon(j2, po2);
+						}
+						else {
+							np.getServiciosEquipo().rendirse(j2.getEquipoPokemon());
+						}
+					}
+					else {
+						w2.println("NoDebilitadoCambio");
 					}
 				}
 				
@@ -251,25 +268,34 @@ public class AtiendeCombate implements Runnable{
 			
 			//FINALIZA COMBATE
 			
-			w1.write("CombFinalizado");
-			w2.write("CombFinalizado");
+			w1.println("CombFinalizado");
+			w2.println("CombFinalizado");
 			
 			boolean debJugador1 = np.getServiciosEquipo().equipoDebilitado(j1.getEquipoPokemon());
 			boolean debJugador2 = np.getServiciosEquipo().equipoDebilitado(j2.getEquipoPokemon());
 			
 			if (debJugador1 && (!debJugador2)) {
-				w1.write(j1.getNombre() + "|Pierde\r\n");
-				w2.write(j2.getNombre() + "|Gana\r\n");
+				w1.println(j1.getNombre() + ";Pierde");
+				w1.println(j2.getNombre() + ";Gana");
+				
+				w2.println(j1.getNombre() + ";Pierde");
+				w2.println(j2.getNombre() + ";Gana");
 			}
 				
 			if ((!debJugador1) && debJugador2) {
-				w1.write(j1.getNombre() + "|Gana\r\n");
-				w2.write(j2.getNombre() + "|Pierde\r\n");
+				w1.println(j1.getNombre() + ";Gana");
+				w1.println(j2.getNombre() + ";Pierde");
+				
+				w2.println(j1.getNombre() + ";Gana");
+				w2.println(j2.getNombre() + ";Pierde");
 			}
 				
 			if (debJugador1 && debJugador2) {
-				w1.write(j1.getNombre() + "|Pierde\r\n");
-				w2.write(j2.getNombre() + "|Pierde\r\n");
+				w1.println(j1.getNombre() + ";Pierde");
+				w1.println(j2.getNombre() + ";Pierde");
+				
+				w2.println(j1.getNombre() + ";Pierde");
+				w2.println(j2.getNombre() + ";Pierde");
 			}
 			
 			
@@ -282,44 +308,42 @@ public class AtiendeCombate implements Runnable{
 		
 	}
 	
-	private static void protocoloServidor(Writer w, Jugador j1, Jugador j2, float danno1, float danno2, boolean deb1, boolean deb2) {
-		try {
-			w.write("MensajeInicio\r\n");
-			
-			w.write("DannoJ1\r\n");
-			if (danno1 != 0) {
-				w.write(j1.getNombre() + "|" + j1.getSeleccionado().getNombre() + "|" + j1.getSeleccionado().getPs() + "|" + danno1 + "\r\n");
-			} else {
-				w.write("nulo\r\n");
-			}
+	private static void protocoloServidor(PrintWriter w, Jugador j1, Jugador j2, float danno2, float danno1, boolean deb1, boolean deb2) {
 
-			w.write("DannoJ2\r\n");
-			if (danno2 != 0) {
-				w.write(j2.getNombre() + "|" + j2.getSeleccionado().getNombre() + "|" + j2.getSeleccionado().getPs() + "|" + danno2 + "\r\n");
-			} else {
-				w.write("nulo\r\n");
-			}
+		w.println("MensajeInicio");
 
-			w.write("DebilitadoJ1\r\n");
-			if (deb1) {
-				w.write(j1.getNombre() + "\r\n");
-			} else {
-				w.write("nulo\r\n");
-			}
-
-			w.write("DebilitadoJ2\r\n");
-			if (deb2) {
-				w.write(j2.getNombre() + "\r\n");
-			} else {
-				w.write("nulo\r\n");
-			}
-
-			w.write("MensajeFin\r\n");
-		} 
-		
-		catch (IOException e) {
-			e.printStackTrace();
+		w.println("DannoJ1");
+		if (danno1 != 0) {
+			w.println(j1.getNombre() + ";" + j1.getSeleccionado().getNombre() + ";" + j1.getSeleccionado().getPs() + ";"
+					+ danno1);
+		} else {
+			w.println("nulo");
 		}
+
+		w.println("DannoJ2");
+		if (danno2 != 0) {
+			w.println(j2.getNombre() + ";" + j2.getSeleccionado().getNombre() + ";" + j2.getSeleccionado().getPs() + ";"
+					+ danno2);
+		} else {
+			w.println("nulo");
+		}
+
+		w.println("DebilitadoJ1");
+		if (deb1) {
+			w.println(j1.getNombre());
+		} else {
+			w.println("nulo");
+		}
+
+		w.println("DebilitadoJ2");
+		if (deb2) {
+			w.println(j2.getNombre());
+		} else {
+			w.println("nulo");
+		}
+
+		w.println("MensajeFin");
+		
 	}
 	
 	private static boolean comprobarFinalizado (NegocioPokemon np, Jugador j1, Jugador j2) {

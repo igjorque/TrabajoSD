@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import dominio.Jugador;
 import dominio.Movimiento;
@@ -37,28 +38,29 @@ public class PokeClient {
 
 	public void ejecutar() {
 		try(Socket sComb = new Socket(this.host, this.puerto);
-				BufferedReader brComb = new BufferedReader (new InputStreamReader (sComb.getInputStream(), "UTF-8"));
-				Writer w = new OutputStreamWriter(sComb.getOutputStream(), "UTF-8");
+				BufferedReader brComb = new BufferedReader (new InputStreamReader (sComb.getInputStream()));
+				PrintWriter w = new PrintWriter(sComb.getOutputStream(), true);
 				ObjectOutputStream oosC = new ObjectOutputStream(sComb.getOutputStream());
 			Socket sFich = new Socket(this.host, this.puertoFicheros);
 				ObjectInputStream ois = new ObjectInputStream(sFich.getInputStream());) 
 		{
-				
+			w.println("aednwsdo");	//Envía esta línea porque recibe caracteres extraños y no sabemos el motivo.
+			
+			
 			ArrayList<Pokemon> listaPoke = (ArrayList<Pokemon>) ois.readObject();
 			ArrayList<Movimiento> listaMov = (ArrayList<Movimiento>) ois.readObject();
 			jugador = presConsola.menuCreacionJugador(listaPoke, listaMov);
 
 			List<Pokemon> listPAux = jugador.getEquipoPokemon().getListaPokemon();
-			
-			w.write(jugador.getNombre() + "|" + listPAux.get(0).getNombre() + "|" + listPAux.get(1).getNombre() + "|" + listPAux.get(2).getNombre() + "|" +
-					listPAux.get(3).getNombre() + "|" + listPAux.get(4).getNombre() + "|" + listPAux.get(5).getNombre() + "\r\n"); 
+			w.println(jugador.getNombre() + ";" + listPAux.get(0).getNombre() + ";" + listPAux.get(1).getNombre() + ";" + listPAux.get(2).getNombre() + ";" +
+					listPAux.get(3).getNombre() + ";" + listPAux.get(4).getNombre() + ";" + listPAux.get(5).getNombre()); 
 					
 			
 			// Avisa al servidor de que está preparado
-			w.write("Listo\r\n");
-			oosC.writeObject(jugador);
+			w.println("Listo");
+			//oosC.writeObject(jugador);
 			presConsola.mostrarEspera();
-
+			
 			brComb.readLine(); //empieza
 				int opcion;
 				int imov;
@@ -92,7 +94,7 @@ public class PokeClient {
 					String lineaDanno1 = brComb.readLine();
 					String[] lineaDanno1Split;
 					if (!lineaDanno1.equals("nulo")) {
-						lineaDanno1Split = lineaDanno1.split("|");
+						lineaDanno1Split = lineaDanno1.split(";");
 						presConsola.mostrarDannos(lineaDanno1Split[0], lineaDanno1Split[1],
 								Integer.parseInt(lineaDanno1Split[2]), Float.parseFloat(lineaDanno1Split[3]));
 					}
@@ -101,48 +103,52 @@ public class PokeClient {
 					String lineaDanno2 = brComb.readLine();
 					String[] lineaDanno2Split;
 					if (!lineaDanno2.equals("nulo")) {
-						lineaDanno2Split = lineaDanno2.split("|");
+						lineaDanno2Split = lineaDanno2.split(";");
 						presConsola.mostrarDannos(lineaDanno2Split[0], lineaDanno2Split[1],
 								Integer.parseInt(lineaDanno2Split[2]), Float.parseFloat(lineaDanno2Split[3]));
 					}
 
 					brComb.readLine(); // Debilitado j1
 					String lineaDeb1 = brComb.readLine();
-					if (!lineaDanno1.equals("nulo")) {
+					if (!lineaDeb1.equals("nulo")) {
 						presConsola.mostrarDebilitado(lineaDeb1);
 					}
 
 					brComb.readLine(); // Debilitado j2
 					String lineaDeb2 = brComb.readLine();
-					if (!lineaDanno2.equals("nulo")) {
+					if (!lineaDeb2.equals("nulo")) {
 						presConsola.mostrarDebilitado(lineaDeb2);
 					}
 
 					brComb.readLine(); // Fin
-
-					////////////////////////
-
-					if (brComb.readLine().equals("DebilitadoCambio")) {
-						String respuestaSiNo = presConsola.preguntaCambioPorDebilitado(this.jugador);
-						if (respuestaSiNo.equals("si")) {
-							int pokeElegido = presConsola.cambioPorDebilitado(this.jugador);
-							w.write(pokeElegido);
-						}
-					}
-
-					///////////////////////
-
-					if (brComb.readLine().equals("CombFinalizado")) {
+					
+					String finContinua = brComb.readLine();
+					if (finContinua.equals("Fin")) {
 						this.finalizar = true;
 					}
-
+					else {
+						String preguntaDeb = brComb.readLine();
+						if (preguntaDeb.equals("DebilitadoCambio")) {
+							String respuestaSiNo = presConsola.preguntaCambioPorDebilitado(this.jugador);
+							if (respuestaSiNo.equals("si")) {
+								int pokeElegido = presConsola.cambioPorDebilitado(this.jugador);
+								w.println("si");
+								w.println(pokeElegido);
+							}
+							else {
+								w.println("no");
+							}
+						}
+					}
 				}
+				
+				brComb.readLine(); //CombFinalizado
 
 				String resultadoJ1 = brComb.readLine();
 				String resultadoJ2 = brComb.readLine();
 
-				String[] resultadoJ1Split = resultadoJ1.split("|");
-				String[] resultadoJ2Split = resultadoJ2.split("|");
+				String[] resultadoJ1Split = resultadoJ1.split(";");
+				String[] resultadoJ2Split = resultadoJ2.split(";");
 
 				if (resultadoJ1Split[1].equals("Gana")) {
 					presConsola.ganar(resultadoJ1Split[0]);
@@ -166,37 +172,32 @@ public class PokeClient {
 		}
 	}
 	
-	private static void protocoloCliente(Writer w, Movimiento m, Pokemon p, boolean r) {
-		try {
-			w.write("MensajeInicio\r\n");
-
-			w.write("Movimiento\r\n");
-			if (m != null) {
-				w.write(m.getNombre() + "\r\n");
-			} else {
-				w.write("nulo\r\n");
-			}
-
-			w.write("Cambiar\r\n");
-			if (p != null) {
-				w.write(p.getNombre() + "\r\n");
-			} else {
-				w.write("nulo\r\n");
-			}
-
-			w.write("Rendirse\r\n");
-			if (r == true) {
-				w.write("si\r\n");
-			} else {
-				w.write("no\r\n");
-			}
-
-			w.write("MensajeFin\r\n");
-		} 
+	private static void protocoloCliente(PrintWriter w, Movimiento m, Pokemon p, boolean r) {
 		
-		catch (IOException e) 
-		{
-			e.printStackTrace();
+		w.println("MensajeInicio");
+
+		w.println("Movimiento");
+		if (m != null) {
+			w.println(m.getNombre());
+		} else {
+			w.println("nulo");
 		}
+
+		w.println("Cambiar");
+		if (p != null) {
+			w.println(p.getNombre());
+		} else {
+			w.println("nulo");
+		}
+
+		w.println("Rendirse");
+		if (r == true) {
+			w.println("si");
+		} else {
+			w.println("no");
+		}
+
+		w.println("MensajeFin");
+
 	}
 }
